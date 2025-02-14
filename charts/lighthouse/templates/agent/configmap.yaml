@@ -1,0 +1,19 @@
+{{- /*
+  Copyright Krack8, Inc. All Rights Reserved.
+*/}}
+{{- if eq .Values.agent.enabled true -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "lighthouse.agent.configmap.name" . }}
+  namespace: {{ include "lighthouse.namespace" . }}
+  labels:
+    {{- include "lighthouse.agent.labels" . | nindent 4 }}
+data:
+  CONTROLLER_URL: {{ include "lighthouse.controller.grpc.url" . | toString | quote }}
+  PORT: {{ .Values.agent.service.port | toString | quote }}
+  AGENT_SECRET_NAME: {{ include "lighthouse.agent.secret.name" . | toString | quote }}
+  RESOURCE_NAMESPACE: {{ include "lighthouse.namespace" . | toString | quote }}
+  AUTH_ENABLED: {{ include "auth.enabled" . | toString | quote }}
+  RUN_MODE: {{ .Values.global.runMode | toString | quote }}
+{{- end }}

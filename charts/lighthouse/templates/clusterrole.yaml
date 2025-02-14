@@ -1,0 +1,14 @@
+{{- /*
+  Copyright Krack8, Inc. All Rights Reserved.
+*/}}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "lighthouse.clusterrole.name" . }}
+rules:
+  - apiGroups:
+      - '*'
+    resources:
+      - '*'
+    verbs:
+      - '*'

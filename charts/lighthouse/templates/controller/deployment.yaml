@@ -1,0 +1,43 @@
+{{- /*
+  Copyright Krack8, Inc. All Rights Reserved.
+*/}}
+{{- if eq .Values.controller.enabled true -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "lighthouse.controller.name" . }}
+  namespace: {{ include "lighthouse.namespace" . }}
+  labels:
+    {{- include "lighthouse.controller.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "lighthouse.controller.selectorLabels" . | nindent 6 }}
+  replicas: {{ .Values.controller.replicaCount }}
+  revisionHistoryLimit: {{ .Values.controller.revisionHistoryLimit }}
+  template:
+    metadata:
+      labels:
+         {{- include "lighthouse.controller.labels" . | nindent 8 }}
+    spec:
+      serviceAccountName: {{ include "lighthouse.serviceAccount.name" .  }}
+      containers:
+        - image: {{ include "lighthouse.controller.image.repository" . }}:{{ .Values.controller.image.tag }}
+          imagePullPolicy: {{ include "lighthouse.controller.image.pullPolicy" .  }}
+          name: lighthouse-controller
+          env:
+            - name: "IS_K8"
+              value: "TRUE"
+          envFrom:
+            - configMapRef:
+                name: {{ include "lighthouse.controller.configmap.name" . }}
+            - secretRef:
+                name: {{ include "lighthouse.controller.secret.name" . }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.controller.service.targetPort }}
+              protocol: TCP
+            - name: grpc
+              containerPort: {{ .Values.controller.grpc.port }}
+              protocol: TCP
+{{- end }}

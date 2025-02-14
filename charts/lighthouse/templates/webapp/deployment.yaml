@@ -1,0 +1,35 @@
+{{- /*
+  Copyright Krack8, Inc. All Rights Reserved.
+*/}}
+{{- if eq .Values.controller.enabled true -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "lighthouse.webapp.name" . }}
+  namespace: {{ include "lighthouse.namespace" . }}
+  labels:
+    {{- include "lighthouse.webapp.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "lighthouse.webapp.selectorLabels" . | nindent 6 }}
+  replicas: {{ .Values.webapp.replicaCount }}
+  revisionHistoryLimit: {{ .Values.webapp.revisionHistoryLimit }}
+  template:
+    metadata:
+      labels:
+         {{- include "lighthouse.webapp.labels" . | nindent 8 }}
+    spec:
+      serviceAccountName: {{ include "lighthouse.serviceAccount.name" .  }}
+      containers:
+        - image: {{ include "lighthouse.webapp.image.repository" . }}:{{ .Values.webapp.image.tag }}
+          imagePullPolicy: {{ include "lighthouse.webapp.image.pullPolicy" .  }}
+          name: lighthouse-webapp
+          envFrom:
+            - configMapRef:
+                name: {{ include "lighthouse.webapp.configmap.name" . }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.webapp.service.targetPort }}
+              protocol: TCP
+{{- end }}

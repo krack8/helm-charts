@@ -1,0 +1,44 @@
+{{- /*
+  Copyright Krack8, Inc. All Rights Reserved.
+*/}}
+{{- if eq .Values.agent.enabled true -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "lighthouse.agent.name" . }}
+  namespace: {{ include "lighthouse.namespace" . }}
+  labels:
+    {{- include "lighthouse.agent.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "lighthouse.agent.selectorLabels" . | nindent 6 }}
+  replicas: {{ .Values.agent.replicaCount }}
+  revisionHistoryLimit: {{ .Values.agent.revisionHistoryLimit }}
+  template:
+    metadata:
+      labels:
+         {{- include "lighthouse.agent.labels" . | nindent 8 }}
+    spec:
+      serviceAccountName: {{ include "lighthouse.serviceAccount.name" .  }}
+      initContainers:
+        - name: wait-for-agent-secret
+          image: bitnami/kubectl:latest
+          command: ['sh', '-c', 'until kubectl get secret {{ include "lighthouse.agent.secret.name" . }} -n {{ .Release.Namespace }}; do echo "Waiting for agent-secret..."; sleep 5; done']
+      containers:
+        - image: {{ include "lighthouse.agent.image.repository" . }}:{{ .Values.agent.image.tag }}
+          imagePullPolicy: {{ include "lighthouse.agent.image.pullPolicy" .  }}
+          name: lighthouse-agent
+          env:
+            - name: "IS_K8"
+              value: "TRUE"
+          envFrom:
+            - configMapRef:
+                name: {{ include "lighthouse.agent.configmap.name" . }}
+            - secretRef:
+                name: {{ include "lighthouse.agent.secret.name" . }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.agent.service.port }}
+              protocol: TCP
+{{- end }}

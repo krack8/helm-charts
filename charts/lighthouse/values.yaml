@@ -1,0 +1,115 @@
+# Copyright Krack8, Inc. All Rights Reserved.
+global:
+  runMode: "PRODUCTION"
+  image:
+    repository: quay.io/klovercloud/krack8
+    pullPolicy: IfNotPresent
+  ingress:
+    apiVersion: ""
+    annotations: {}
+    ingressClassName: ""
+    pathType: ImplementationSpecific
+    tls:
+      enabled: false
+      secretName: ""
+      crt: ""
+      key: ""
+      ca: ""
+  kubeVersion: ""
+
+db:
+  mongo:
+    create: false
+    uri: ""
+    databaseName: ""
+
+user:
+  email: ""
+  password: ""
+
+controller:
+  enabled: false
+  nameOverride: ""
+  replicaCount: 1
+  revisionHistoryLimit: 0
+  url: ""
+  apiEndpoint: ""
+  service:
+    type: ClusterIP
+    port: 80
+    targetPort: 8080
+  grpc:
+    port: 50051
+  image:
+    repository: ""
+    pullPolicy: ""
+    tag: lighthouse-controller-v1.0.0
+  ingress:
+    enabled: false
+    apiVersion: ""
+    ## e.g:
+    ## annotations:
+    ##   nginx.ingress.kubernetes.io/rewrite-target: /
+    ##   cert-manager.io/cluster-issuer: cluster-issuer-name
+    ##
+    annotations: {}
+    ingressClassName: ""
+    hostname: ""
+    path: /
+    pathType: ImplementationSpecific
+    tls:
+      enabled: false
+      secretName: ""
+      crt: ""
+      key: ""
+      ca: ""
+
+webapp:
+  replicaCount: 1
+  nameOverride: ""
+  revisionHistoryLimit: 0
+  service:
+    type: ClusterIP
+    port: 80
+    targetPort: 8000
+  image:
+    repository: ""
+    pullPolicy: ""
+    tag: lighthouse-webapp-v1.0.0
+  ingress:
+    enabled: false
+    apiVersion: ""
+    ## e.g:
+    ## annotations:
+    ##   nginx.ingress.kubernetes.io/rewrite-target: /
+    ##   cert-manager.io/cluster-issuer: cluster-issuer-name
+    ##
+    annotations: {}
+    ingressClassName: ""
+    hostname: ""
+    path: /
+    pathType: ImplementationSpecific
+    tls:
+      enabled: false
+      secretName: ""
+      crt: ""
+      key: ""
+      ca: ""
+
+agent:
+  enabled: false
+  nameOverride: ""
+  replicaCount: 1
+  revisionHistoryLimit: 0
+  url: ""
+  service:
+    type: ClusterIP
+    port: 8080
+  image:
+    repository: ""
+    pullPolicy: ""
+    tag: lighthouse-agent-v1.0.0
+
+auth:
+  enabled: false
+  token: ""

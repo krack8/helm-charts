@@ -1,0 +1,14 @@
+{{- /*
+  Copyright Krack8, Inc. All Rights Reserved.
+*/}}
+{{- if eq .Values.controller.enabled true -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "lighthouse.webapp.configmap.name" . }}
+  namespace: {{ include "lighthouse.namespace" . }}
+  labels:
+    {{- include "lighthouse.webapp.labels" . | nindent 4 }}
+data:
+  LIGHTHOUSE_API_ENDPOINT: {{ include "lighthouse.controller.apiEndpoint" . | toString | quote }}
+{{- end }}

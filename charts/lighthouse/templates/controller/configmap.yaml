@@ -1,0 +1,23 @@
+{{- /*
+  Copyright Krack8, Inc. All Rights Reserved.
+*/}}
+{{- if eq .Values.controller.enabled true -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "lighthouse.controller.configmap.name" . }}
+  namespace: {{ include "lighthouse.namespace" . }}
+  labels:
+    {{- include "lighthouse.controller.labels" . | nindent 4 }}
+data:
+  CONTROLLER_URL: {{ include "lighthouse.controller.grpc.url" . | toString | quote }}
+  PORT: {{ .Values.agent.service.port | toString | quote }}
+  AGENT_SECRET_NAME: {{ include "lighthouse.agent.secret.name" . | toString | quote }}
+  RESOURCE_NAMESPACE: {{ include "lighthouse.namespace" . | toString | quote }}
+  AUTH_ENABLED: {{ include "auth.enabled" . | toString | quote }}
+  ACCESS_TOKEN_EXPIRY: {{ "15m" | toString | quote }}
+  REFRESH_TOKEN_EXPIRY: {{ "24h" | toString | quote }}
+  MONGO_URI: {{ include "mongo.uri" . | toString | quote }}
+  DB_NAME: {{ include "mongo.databaseName" . | toString | quote }}
+  RUN_MODE: {{ .Values.global.runMode | toString | quote }}
+{{- end }}

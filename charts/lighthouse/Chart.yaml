@@ -1,0 +1,7 @@
+# Copyright Krack8, Inc. All Rights Reserved.
+apiVersion: v2
+name: lighthouse
+description: Krack8 Lighthouse
+type: application
+version: 1.0.0
+appVersion: "1.0.0"

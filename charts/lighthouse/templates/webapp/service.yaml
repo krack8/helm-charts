@@ -1,0 +1,21 @@
+{{- /*
+  Copyright Krack8, Inc. All Rights Reserved.
+*/}}
+{{- if eq .Values.controller.enabled true -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "lighthouse.webapp.name" . }}
+  namespace: {{ include "lighthouse.namespace" . }}
+  labels:
+    {{- include "lighthouse.webapp.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.webapp.service.type }}
+  ports:
+    - port: {{ .Values.webapp.service.port }}
+      targetPort: {{ .Values.webapp.service.targetPort }}
+      protocol: TCP
+      name: http
+  selector:
+      {{- include "lighthouse.webapp.selectorLabels" . | nindent 4 }}
+{{- end }}

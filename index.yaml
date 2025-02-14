@@ -1,0 +1,14 @@
+apiVersion: v1
+entries:
+  lighthouse:
+    - apiVersion: v2
+      appVersion: 1.0.0
+      created: "2025-02-12T16:02:59.883638263+06:00"
+      description: Krack8 Lighthouse
+      digest: 50f1bd5d9fc725b97d07f037da5cbb6a17bec4afe842386bca69ca8f53603e66
+      name: lighthouse
+      type: application
+      urls:
+        - https://krack8.github.io/helm-charts/packages/lighthouse/lighthouse-1.0.0.tgz
+      version: 1.0.0
+generated: "2025-02-12T16:02:59.883177063+06:00"
