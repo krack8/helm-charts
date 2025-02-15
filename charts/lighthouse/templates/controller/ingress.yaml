@@ -9,7 +9,7 @@ metadata:
   namespace: {{ include "lighthouse.namespace" . }}
   labels:
     {{- include "lighthouse.controller.labels" . | nindent 4 }}
-  {{- if or (.Values.controller.ingress.annotations) (.Values.controller.ingress.annotations) }}
+  {{- if or (.Values.controller.ingress.annotations) (.Values.global.ingress.annotations) }}
   annotations:
      {{- $annotations := .Values.controller.ingress.annotations | default .Values.global.ingress.annotations }}
      {{- range $key, $value := $annotations }}
@@ -17,9 +17,11 @@ metadata:
      {{- end }}
   {{- end }}
 spec:
+  {{- if (eq "true" (include "ingress.supportsIngressClassname" .)) }}
     {{- if or (.Values.controller.ingress.ingressClassName) (.Values.global.ingress.ingressClassName) }}
   ingressClassName: {{ .Values.controller.ingress.ingressClassName | default .Values.global.ingress.ingressClassName | toString | quote }}
     {{- end }}
+  {{- end }}
   rules:
       {{- if .Values.controller.ingress.hostname }}
     - host: {{ .Values.controller.ingress.hostname }}

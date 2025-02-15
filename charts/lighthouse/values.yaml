@@ -15,6 +15,16 @@ global:
       crt: ""
       key: ""
       ca: ""
+  ingressGrpc:
+    annotations: {}
+    ingressClassName: ""
+    pathType: ImplementationSpecific
+    tls:
+      enabled: false
+      secretName: ""
+      crt: ""
+      key: ""
+      ca: ""
   kubeVersion: ""
 
 db:
@@ -40,6 +50,7 @@ controller:
     targetPort: 8080
   grpc:
     port: 50051
+    targetPort: 50051
   image:
     repository: ""
     pullPolicy: ""
@@ -47,6 +58,24 @@ controller:
   ingress:
     enabled: false
     apiVersion: ""
+    ## e.g:
+    ## annotations:
+    ##   nginx.ingress.kubernetes.io/rewrite-target: /
+    ##   cert-manager.io/cluster-issuer: cluster-issuer-name
+    ##
+    annotations: {}
+    ingressClassName: ""
+    hostname: ""
+    path: /
+    pathType: ImplementationSpecific
+    tls:
+      enabled: false
+      secretName: ""
+      crt: ""
+      key: ""
+      ca: ""
+  ingressGrpc:
+    enabled: false
     ## e.g:
     ## annotations:
     ##   nginx.ingress.kubernetes.io/rewrite-target: /

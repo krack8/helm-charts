@@ -97,6 +97,14 @@ app.kubernetes.io/managed-by: {{ "krack8" }}
 {{- end -}}
 {{- end -}}
 
+{{- define "ingress.supportsIngressClassname" -}}
+{{- if semverCompare "<1.18-0" (include "kubeVersion" .) -}}
+{{- print "false" -}}
+{{- else -}}
+{{- print "true" -}}
+{{- end -}}
+{{- end -}}
+
 {{- define "ingress.backend" -}}
 {{- $apiVersion := .ingressApiVersion -}}
 {{- if or (eq $apiVersion "extensions/v1beta1") (eq $apiVersion "networking.k8s.io/v1beta1") -}}

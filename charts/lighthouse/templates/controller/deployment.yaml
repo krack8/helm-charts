@@ -38,6 +38,6 @@ spec:
               containerPort: {{ .Values.controller.service.targetPort }}
               protocol: TCP
             - name: grpc
-              containerPort: {{ .Values.controller.grpc.port }}
+              containerPort: {{ .Values.controller.grpc.targetPort }}
               protocol: TCP
 {{- end }}
