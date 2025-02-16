@@ -116,11 +116,11 @@ service:
 {{- end -}}
 
 
-{{- define "lighthouse.agent.group" -}}
+{{- define "lighthouse.agent.wrokerGroup" -}}
 {{- if .Values.agent.group -}}
 {{- printf .Values.agent.group }}
 {{- else -}}
-{{- printf "Default-Group" }}
+{{- printf "DefaultGroup" }}
 {{- end }}
 {{- end }}
 
