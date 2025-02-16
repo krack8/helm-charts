@@ -143,6 +143,8 @@ webapp:
 
 agent:
   enabled: false
+  group: ""
+  defaultClusterName: ""
   nameOverride: ""
   replicaCount: 1
   revisionHistoryLimit: 0

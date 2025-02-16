@@ -115,3 +115,19 @@ service:
 {{- default (default .Capabilities.KubeVersion.Version) ((.Values.global).kubeVersion) -}}
 {{- end -}}
 
+
+{{- define "lighthouse.agent.group" -}}
+{{- if .Values.agent.group -}}
+{{- printf .Values.agent.group }}
+{{- else -}}
+{{- printf "Default-Group" }}
+{{- end }}
+{{- end }}
+
+{{- define "lighthouse.agent.defaultClusterName" -}}
+{{- if .Values.agent.defaultClusterName -}}
+{{- printf .Values.agent.defaultClusterName }}
+{{- else -}}
+{{- printf "Default-cluster" }}
+{{- end }}
+{{- end }}

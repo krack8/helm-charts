@@ -19,4 +19,6 @@ data:
   ACCESS_TOKEN_EXPIRY: {{ "15m" | toString | quote }}
   REFRESH_TOKEN_EXPIRY: {{ "24h" | toString | quote }}
   RUN_MODE: {{ .Values.global.runMode | toString | quote }}
+  DEFAULT_WORKER_GROUP: {{ include "lighthouse.agent.group" . | toString | quote }}
+  DEFAULT_CLUSTER_NAME: {{ include "lighthouse.agent.defaultClusterName" . | toString | quote }}
 {{- end }}
