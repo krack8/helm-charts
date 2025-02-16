@@ -1,0 +1,17 @@
+{{- /*
+  Copyright Krack8, Inc. All Rights Reserved.
+*/}}
+{{- if eq .Values.controller.enabled true -}}
+apiVersion: {{ include "rbac.apiVersion" . }}
+kind: ClusterRoleBinding
+metadata:
+  name: {{ include "lighthouse.controller.clusterrolebinding.name" . }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ include "lighthouse.controller.clusterrole.name" . }}
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "lighthouse.controller.serviceAccount.name" . }}
+    namespace: {{ include "lighthouse.namespace" . }}
+{{- end }}

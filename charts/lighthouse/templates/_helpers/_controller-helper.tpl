@@ -5,6 +5,18 @@
 {{- printf .Values.controller.nameOverride | default "lighthouse-controller" }}
 {{- end }}
 
+{{- define "lighthouse.controller.serviceAccount.name" -}}
+{{ printf "lighthouse-controller-sa" }}
+{{- end }}
+
+{{- define "lighthouse.controller.clusterrole.name" -}}
+{{ printf "lighthouse-controller-cr-%s" (include "lighthouse.namespace" .) }}
+{{- end }}
+
+{{- define "lighthouse.controller.clusterrolebinding.name" -}}
+{{- printf "lighthouse-controller-crb-%s" (include "lighthouse.namespace" .) }}
+{{- end }}
+
 {{- define "lighthouse.controller.configmap.name" -}}
 {{- include "lighthouse.controller.name" . }}
 {{- end }}
@@ -57,10 +69,11 @@ app.kubernetes.io/instance: {{ printf "controller" }}
 {{- end }}
 {{- end }}
 
-
 {{- define "lighthouse.controller.grpc.url" -}}
 {{- if .Values.controller.url -}}
 {{- printf .Values.controller.url }}
+{{- else if (eq .Values.controller.ingressGrpc.enabled true) -}}
+{{- print .Values.controller.ingressGrpc.hostname }}
 {{- else -}}
 {{- printf "%s.%s:%s" (include "lighthouse.controller.name" .) (include "lighthouse.namespace" .) (toString .Values.controller.grpc.port) }}
 {{- end }}

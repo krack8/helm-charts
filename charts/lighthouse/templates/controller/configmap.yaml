@@ -15,9 +15,8 @@ data:
   AGENT_SECRET_NAME: {{ include "lighthouse.agent.secret.name" . | toString | quote }}
   RESOURCE_NAMESPACE: {{ include "lighthouse.namespace" . | toString | quote }}
   AUTH_ENABLED: {{ include "auth.enabled" . | toString | quote }}
+  DB_NAME: {{ include "lighthouse.db.mongo.databaseName" . | toString | quote }}
   ACCESS_TOKEN_EXPIRY: {{ "15m" | toString | quote }}
   REFRESH_TOKEN_EXPIRY: {{ "24h" | toString | quote }}
-  MONGO_URI: {{ include "mongo.uri" . | toString | quote }}
-  DB_NAME: {{ include "mongo.databaseName" . | toString | quote }}
   RUN_MODE: {{ .Values.global.runMode | toString | quote }}
 {{- end }}

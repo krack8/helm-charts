@@ -20,7 +20,7 @@ spec:
       labels:
          {{- include "lighthouse.agent.labels" . | nindent 8 }}
     spec:
-      serviceAccountName: {{ include "lighthouse.serviceAccount.name" .  }}
+      serviceAccountName: {{ include "lighthouse.agent.serviceAccount.name" .  }}
       initContainers:
         - name: wait-for-agent-secret
           image: bitnami/kubectl:latest

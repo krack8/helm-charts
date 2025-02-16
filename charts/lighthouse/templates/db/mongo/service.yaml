@@ -1,0 +1,20 @@
+{{- /*
+  Copyright Krack8, Inc. All Rights Reserved.
+*/}}
+{{- if and (eq .Values.controller.enabled true) (eq .Values.db.mongo.create true) -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "lighthouse.db.mongo.headlessServiceName" . }}
+  namespace: {{ include "lighthouse.namespace" . }}
+  labels:
+    {{- include "lighthouse.db.mongo.labels" . | nindent 4 }}
+spec:
+  clusterIP: None
+  selector:
+  {{- include "lighthouse.db.mongo.selectorLabels" . | nindent 4 }}
+  ports:
+    - protocol: TCP
+      port: {{ .Values.db.mongo.port }}
+      targetPort: {{ .Values.db.mongo.targetPort }}
+{{- end }}

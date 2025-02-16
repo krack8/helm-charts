@@ -20,7 +20,7 @@ spec:
       labels:
          {{- include "lighthouse.controller.labels" . | nindent 8 }}
     spec:
-      serviceAccountName: {{ include "lighthouse.serviceAccount.name" .  }}
+      serviceAccountName: {{ include "lighthouse.controller.serviceAccount.name" .  }}
       containers:
         - image: {{ include "lighthouse.controller.image.repository" . }}:{{ .Values.controller.image.tag }}
           imagePullPolicy: {{ include "lighthouse.controller.image.pullPolicy" .  }}

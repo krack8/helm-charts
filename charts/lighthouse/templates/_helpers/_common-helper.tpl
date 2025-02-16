@@ -18,19 +18,6 @@ app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 app.kubernetes.io/managed-by: {{ "krack8" }}
 {{- end }}
 
-{{- define "lighthouse.serviceAccount.name" -}}
-{{ printf "lighthouse-sa" }}
-{{- end }}
-
-{{- define "lighthouse.clusterrole.name" -}}
-{{ printf "lighthouse-role-%s" (include "lighthouse.namespace" .) }}
-{{- end }}
-
-{{- define "lighthouse.clusterrolebinding.name" -}}
-{{ printf "" }}
-{{- printf "lighthouse-rb-%s" (include "lighthouse.namespace" .) }}
-{{- end }}
-
 {{- define "lighthouse.user.email" -}}
 {{- if .Values.user.email -}}
 {{- printf .Values.user.email }}
@@ -47,22 +34,6 @@ app.kubernetes.io/managed-by: {{ "krack8" }}
 {{- end }}
 {{- end }}
 
-{{- define "mongo.uri" -}}
-{{- if .Values.db.mongo.uri -}}
-{{- printf .Values.db.mongo.uri }}
-{{- else -}}
-{{- printf "mongodb://localhost:27017" }}
-{{- end }}
-{{- end }}
-
-{{- define "mongo.databaseName" -}}
-{{- if .Values.db.mongo.databaseName -}}
-{{- printf .Values.db.mongo.databaseName }}
-{{- else -}}
-{{- printf "lighthouse" }}
-{{- end }}
-{{- end }}
-
 {{- define "auth.enabled" -}}
 {{- if eq .Values.auth.enabled true -}}
 {{- printf "TRUE" }}
@@ -74,6 +45,16 @@ app.kubernetes.io/managed-by: {{ "krack8" }}
 {{/*
      the appropriate apiVersion for ingress.
 */}}
+{{- define "rbac.apiVersion" -}}
+{{- $kubeVersion := include "kubeVersion" . -}}
+{{- if and (not (empty $kubeVersion)) (semverCompare "<1.17-0" $kubeVersion) -}}
+{{- print "rbac.authorization.k8s.io/v1beta1" -}}
+{{- else -}}
+{{- print "rbac.authorization.k8s.io/v1" -}}
+{{- end -}}
+{{- end -}}
+
+
 {{- define "ingress.apiVersion" -}}
 {{- if not (empty .Values.global.ingress.apiVersion) -}}
 {{- .Values.global.ingress.apiVersion -}}

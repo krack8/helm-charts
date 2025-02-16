@@ -5,6 +5,18 @@
 {{- printf .Values.agent.nameOverride | default "lighthouse-agent" }}
 {{- end }}
 
+{{- define "lighthouse.agent.serviceAccount.name" -}}
+{{ printf "lighthouse-agent-sa" }}
+{{- end }}
+
+{{- define "lighthouse.agent.clusterrole.name" -}}
+{{ printf "lighthouse-agent-cr-%s" (include "lighthouse.namespace" .) }}
+{{- end }}
+
+{{- define "lighthouse.agent.clusterrolebinding.name" -}}
+{{- printf "lighthouse-agent-crb-%s" (include "lighthouse.namespace" .) }}
+{{- end }}
+
 {{- define "lighthouse.agent.configmap.name" -}}
 {{- include "lighthouse.agent.name" . }}
 {{- end }}
