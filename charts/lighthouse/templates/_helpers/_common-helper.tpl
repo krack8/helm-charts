@@ -15,7 +15,7 @@ helm.sh/chart: {{ include "lighthouse.chart" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
-app.kubernetes.io/managed-by: {{ "krack8" }}
+app.kubernetes.io/managed-by: {{ "Helm" }}
 {{- end }}
 
 {{- define "lighthouse.user.email" -}}
