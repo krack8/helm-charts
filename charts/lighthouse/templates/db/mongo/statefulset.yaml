@@ -41,8 +41,6 @@ spec:
           {{- include "lighthouse.db.mongo.labels" . | nindent 10 }}
         {{- if or (.Values.webapp.ingress.annotations) (.Values.global.ingress.annotations) }}
         annotations:
-          meta.helm.sh/release-name: {{ .Release.Name | quote }}
-          meta.helm.sh/release-namespace: {{ .Release.Namespace | quote  }}
          {{- $annotations := .Values.db.mongo.persistence.annotations }}
          {{- range $key, $value := $annotations }}
          {{ $key }}: {{ $value | quote }}
