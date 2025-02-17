@@ -1,7 +1,7 @@
 {{- /*
   Copyright Krack8, Inc. All Rights Reserved.
 */}}
-{{- if and (eq .Values.controller.enabled true) (eq .Values.db.mongo.create true) -}}
+{{- if and (eq (include "lighthouse.controller.enabled" .) "true") (eq .Values.db.mongo.create true) -}}
 apiVersion: v1
 kind: Service
 metadata:

@@ -1,7 +1,7 @@
 {{- /*
   Copyright Krack8, Inc. All Rights Reserved.
 */}}
-{{- if eq .Values.controller.enabled true -}}
+{{- if eq (include "lighthouse.controller.enabled" .) "true" -}}
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -41,9 +41,9 @@ spec:
               fi
               {{- end }}
               echo "Checking for Secrets..."
-              if kubectl get secret {{ include "lighthouse.agent.secret.name" . }} -n {{ .Release.Namespace }} >/dev/null 2>&1; then
+              if kubectl get secret {{ include "lighthouse.agent.auth.secret.name" . }} -n {{ .Release.Namespace }} >/dev/null 2>&1; then
                 echo "Deleting Secrets..."
-                kubectl delete secret {{ include "lighthouse.agent.secret.name" . }} -n {{ .Release.Namespace }}
+                kubectl delete secret {{ include "lighthouse.agent.auth.secret.name" . }} -n {{ .Release.Namespace }}
               else
                 echo "No Secrets found. Skipping deletion."
               fi

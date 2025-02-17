@@ -1,7 +1,7 @@
 {{- /*
   Copyright Krack8, Inc. All Rights Reserved.
 */}}
-{{- if and (eq .Values.controller.enabled true) (eq .Values.db.mongo.create true) -}}
+{{- if and (eq (include "lighthouse.controller.enabled" .) "true") (eq .Values.db.mongo.create true) -}}
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -39,7 +39,7 @@ spec:
         namespace: {{ include "lighthouse.namespace" . }}
         labels:
           {{- include "lighthouse.db.mongo.labels" . | nindent 10 }}
-        {{- if or (.Values.webapp.ingress.annotations) (.Values.global.ingress.annotations) }}
+        {{- if .Values.db.mongo.persistence.annotations }}
         annotations:
          {{- $annotations := .Values.db.mongo.persistence.annotations }}
          {{- range $key, $value := $annotations }}

@@ -1,7 +1,7 @@
 {{- /*
   Copyright Krack8, Inc. All Rights Reserved.
 */}}
-{{- if and (eq (include "lighthouse.controller.enabled" .) "true") (eq .Values.server.ingress.enabled true) (eq .Values.server.ingress.createCombinedIngress false) -}}
+{{- if and (eq (include "lighthouse.controller.enabled" .) "true") (eq .Values.server.ingress.enabled true) (eq .Values.server.ingress.createCombinedIngress true) -}}
 apiVersion: {{ .Values.server.ingress.apiVersion | default (include "ingress.apiVersion" .) }}
 kind: Ingress
 metadata:
@@ -15,6 +15,10 @@ metadata:
      {{- range $key, $value := $annotations }}
      {{ $key }}: {{ $value | quote }}
      {{- end }}
+  {{- else }}
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: "/$1"
+    nginx.ingress.kubernetes.io/use-regex: "true"
   {{- end }}
 spec:
   {{- if (eq "true" (include "ingress.supportsIngressClassname" .)) }}
@@ -27,7 +31,12 @@ spec:
     - host: {{ .Values.server.ingress.hostname }}
       http:
         paths:
-          - path: {{ .Values.server.ingress.path }}
+          - path: /(.*)
+              {{- if eq "true" (include "ingress.supportsPathType" .) }}
+            pathType: {{ .Values.server.webapp.ingress.pathType | default .Values.global.ingress.pathType }}
+              {{- end }}
+            backend: {{- include "ingress.backend" (dict "ingressApiVersion" (.Values.server.webapp.ingress.apiVersion | default (include "ingress.apiVersion" .)) "serviceName" (include "lighthouse.webapp.name" .) "servicePort" .Values.server.webapp.service.port . $)  | nindent 14 }}
+          - path: /server/(.*)
               {{- if eq "true" (include "ingress.supportsPathType" .) }}
             pathType: {{ .Values.server.ingress.pathType | default .Values.global.ingress.pathType }}
               {{- end }}

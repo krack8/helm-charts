@@ -6,6 +6,8 @@ apiVersion: {{ include "rbac.apiVersion" . }}
 kind: ClusterRoleBinding
 metadata:
   name: {{ include "lighthouse.agent.clusterrolebinding.name" . }}
+  labels:
+    {{- include "lighthouse.agent.labels" . | nindent 4 }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole

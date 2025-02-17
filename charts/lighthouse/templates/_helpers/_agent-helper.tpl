@@ -2,7 +2,7 @@
   Copyright Krack8, Inc. All Rights Reserved.
 */}}
 {{- define "lighthouse.agent.name" -}}
-{{- printf .Values.agent.nameOverride | default "lighthouse-agent" }}
+{{- printf "lighthouse-agent" }}
 {{- end }}
 
 {{- define "lighthouse.agent.serviceAccount.name" -}}
@@ -24,6 +24,11 @@
 {{- define "lighthouse.agent.secret.name" -}}
 {{- printf "%s-secret" (include "lighthouse.agent.name" .) }}
 {{- end }}
+
+{{- define "lighthouse.agent.auth.secret.name" -}}
+{{- printf "%s-auth-secret" (include "lighthouse.agent.name" .) }}
+{{- end }}
+
 
 {{- define "lighthouse.agent.labels" -}}
 {{ include "lighthouse.common.labels" . }}

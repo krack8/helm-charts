@@ -1,7 +1,7 @@
 {{- /*
   Copyright Krack8, Inc. All Rights Reserved.
 */}}
-{{- if eq .Values.controller.enabled true -}}
+{{- if eq (include "lighthouse.controller.enabled" .) "true" -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -13,8 +13,8 @@ spec:
   selector:
     matchLabels:
       {{- include "lighthouse.controller.selectorLabels" . | nindent 6 }}
-  replicas: {{ .Values.controller.replicaCount }}
-  revisionHistoryLimit: {{ .Values.controller.revisionHistoryLimit }}
+  replicas: {{ .Values.server.replicaCount }}
+  revisionHistoryLimit: {{ .Values.server.revisionHistoryLimit }}
   template:
     metadata:
       labels:
@@ -22,7 +22,7 @@ spec:
     spec:
       serviceAccountName: {{ include "lighthouse.controller.serviceAccount.name" .  }}
       containers:
-        - image: {{ include "lighthouse.controller.image.repository" . }}:{{ .Values.controller.image.tag }}
+        - image: {{ include "lighthouse.controller.image.repository" . }}:{{ .Values.server.image.tag }}
           imagePullPolicy: {{ include "lighthouse.controller.image.pullPolicy" .  }}
           name: lighthouse-controller
           env:
@@ -33,11 +33,16 @@ spec:
                 name: {{ include "lighthouse.controller.configmap.name" . }}
             - secretRef:
                 name: {{ include "lighthouse.controller.secret.name" . }}
+          {{- if .Values.server.resources }}
+          resources: {{- toYaml .Values.server.resources | nindent 12 }}
+          {{- else if .Values.global.resources }}
+          resources: {{- toYaml .Values.global.resources | nindent 12 }}
+          {{- end }}
           ports:
             - name: http
-              containerPort: {{ .Values.controller.service.targetPort }}
+              containerPort: {{ .Values.server.service.targetPort }}
               protocol: TCP
             - name: grpc
-              containerPort: {{ .Values.controller.grpc.targetPort }}
+              containerPort: {{ .Values.server.grpc.targetPort }}
               protocol: TCP
 {{- end }}

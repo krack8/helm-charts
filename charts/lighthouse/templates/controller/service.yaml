@@ -1,7 +1,7 @@
 {{- /*
   Copyright Krack8, Inc. All Rights Reserved.
 */}}
-{{- if eq .Values.controller.enabled true -}}
+{{- if eq (include "lighthouse.controller.enabled" .) "true" -}}
 apiVersion: v1
 kind: Service
 metadata:
@@ -10,14 +10,14 @@ metadata:
   labels:
     {{- include "lighthouse.controller.labels" . | nindent 4 }}
 spec:
-  type: {{ .Values.controller.service.type }}
+  type: {{ .Values.server.service.type }}
   ports:
-    - port: {{ .Values.controller.service.port }}
-      targetPort: {{ .Values.controller.service.targetPort }}
+    - port: {{ .Values.server.service.port }}
+      targetPort: {{ .Values.server.service.targetPort }}
       protocol: TCP
       name: http
-    - port: {{ .Values.controller.grpc.port }}
-      targetPort: {{ .Values.controller.grpc.targetPort }}
+    - port: {{ .Values.server.grpc.port }}
+      targetPort: {{ .Values.server.grpc.targetPort }}
       protocol: TCP
       name: grpc
   selector:

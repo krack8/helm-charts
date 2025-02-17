@@ -4,8 +4,24 @@ global:
   image:
     repository: quay.io/klovercloud/krack8
     pullPolicy: IfNotPresent
+  ## @param global.resources Set container requests and limits for different resources like CPU or memory
+  ## Example:
+  ## resources:
+  ##   requests:
+  ##     cpu: 2
+  ##     memory: 512Mi
+  ##   limits:
+  ##     cpu: 3
+  ##     memory: 1024Mi
+  ##
+  resources: {}
   ingress:
     apiVersion: ""
+    ## e.g:
+    ## annotations:
+    ##   nginx.ingress.kubernetes.io/rewrite-target: /
+    ##   cert-manager.io/cluster-issuer: cluster-issuer-name
+    ##
     annotations: {}
     ingressClassName: ""
     pathType: ImplementationSpecific
@@ -16,17 +32,22 @@ global:
       key: ""
       ca: ""
   ingressGrpc:
+    ## e.g:
+    ## annotations:
+    ##   nginx.ingress.kubernetes.io/rewrite-target: /
+    ##   cert-manager.io/cluster-issuer: cluster-issuer-name
+    ##
     annotations: {}
     ingressClassName: ""
     pathType: ImplementationSpecific
     tls:
       enabled: false
+      useIngressTls: false
       secretName: ""
       crt: ""
       key: ""
       ca: ""
   kubeVersion: ""
-
 
 db:
   mongo:
@@ -53,13 +74,13 @@ user:
   email: ""
   password: ""
 
-controller:
+server:
   enabled: false
-  nameOverride: ""
   replicaCount: 1
   revisionHistoryLimit: 0
   url: ""
   apiEndpoint: ""
+  resources: {}
   service:
     type: ClusterIP
     port: 80
@@ -73,6 +94,7 @@ controller:
     tag: lighthouse-controller-v1.0.0
   ingress:
     enabled: false
+    createCombinedIngress: false
     apiVersion: ""
     ## e.g:
     ## annotations:
@@ -104,51 +126,53 @@ controller:
     pathType: ImplementationSpecific
     tls:
       enabled: false
+      useIngressTls: false
       secretName: ""
       crt: ""
       key: ""
       ca: ""
-
-webapp:
-  replicaCount: 1
-  nameOverride: ""
-  revisionHistoryLimit: 0
-  service:
-    type: ClusterIP
-    port: 80
-    targetPort: 8000
-  image:
-    repository: ""
-    pullPolicy: ""
-    tag: lighthouse-webapp-v1.0.0
-  ingress:
-    enabled: false
-    apiVersion: ""
-    ## e.g:
-    ## annotations:
-    ##   nginx.ingress.kubernetes.io/rewrite-target: /
-    ##   cert-manager.io/cluster-issuer: cluster-issuer-name
-    ##
-    annotations: {}
-    ingressClassName: ""
-    hostname: ""
-    path: /
-    pathType: ImplementationSpecific
-    tls:
+  webapp:
+    replicaCount: 1
+    revisionHistoryLimit: 0
+    resources: {}
+    service:
+      type: ClusterIP
+      port: 80
+      targetPort: 8000
+    image:
+      repository: ""
+      pullPolicy: ""
+      tag: lighthouse-webapp-v1.0.0
+    ingress:
       enabled: false
-      secretName: ""
-      crt: ""
-      key: ""
-      ca: ""
+      apiVersion: ""
+      ## e.g:
+      ## annotations:
+      ##   nginx.ingress.kubernetes.io/rewrite-target: /
+      ##   cert-manager.io/cluster-issuer: cluster-issuer-name
+      ##
+      annotations: { }
+      ingressClassName: ""
+      hostname: ""
+      path: /
+      pathType: ImplementationSpecific
+      tls:
+        enabled: false
+        secretName: ""
+        crt: ""
+        key: ""
+        ca: ""
 
 agent:
   enabled: false
   group: ""
   defaultClusterName: ""
-  nameOverride: ""
   replicaCount: 1
   revisionHistoryLimit: 0
   url: ""
+  resources: {}
+  connectServerInternally: false
+  skipServerTlsVerification: false
   service:
     type: ClusterIP
     port: 8080

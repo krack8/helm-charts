@@ -117,10 +117,11 @@ service:
 
 
 {{- define "lighthouse.agent.wrokerGroup" -}}
+{{- if and (eq (include "lighthouse.controller.enabled" .) "false") (eq .Values.agent.enabled true) -}}
 {{- if .Values.agent.group -}}
 {{- printf .Values.agent.group }}
-{{- else -}}
-{{- printf "DefaultGroup" }}
+{{- end }}
+{{- printf "" }}
 {{- end }}
 {{- end }}
 
@@ -131,3 +132,20 @@ service:
 {{- printf "Default-cluster" }}
 {{- end }}
 {{- end }}
+
+{{- define "lighthouse.agent.connectServerInternally" -}}
+{{- if eq .Values.agent.connectServerInternally true -}}
+{{ printf "TRUE" }}
+{{- else -}}
+{{ printf "FALSE" }}
+{{- end }}
+{{- end }}
+
+{{- define "lighthouse.agent.skipServerTlsVerification" -}}
+{{- if eq .Values.agent.skipServerTlsVerification true -}}
+{{ printf "TRUE" }}
+{{- else -}}
+{{ printf "FALSE" }}
+{{- end }}
+{{- end }}
+

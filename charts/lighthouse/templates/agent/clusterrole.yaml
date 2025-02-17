@@ -6,6 +6,8 @@ apiVersion: {{ include "rbac.apiVersion" . }}
 kind: ClusterRole
 metadata:
   name: {{ include "lighthouse.agent.clusterrole.name" . }}
+  labels:
+    {{- include "lighthouse.agent.labels" . | nindent 4 }}
 rules:
   - apiGroups:
       - '*'

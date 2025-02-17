@@ -1,11 +1,13 @@
 {{- /*
   Copyright Krack8, Inc. All Rights Reserved.
 */}}
-{{- if eq .Values.controller.enabled true -}}
+{{- if eq (include "lighthouse.controller.enabled" .) "true" -}}
 apiVersion: {{ include "rbac.apiVersion" . }}
 kind: ClusterRoleBinding
 metadata:
   name: {{ include "lighthouse.controller.clusterrolebinding.name" . }}
+  labels:
+    {{- include "lighthouse.controller.labels" . | nindent 4 }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
