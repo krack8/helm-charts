@@ -1,7 +1,7 @@
 {{- /*
   Copyright Krack8, Inc. All Rights Reserved.
 */}}
-{{- if and (eq (include "lighthouse.controller.enabled" .) "true") (eq .Values.server.ingress.enabled true) (eq .Values.server.ingress.createCombinedIngress false) -}}
+{{- if and (eq (include "lighthouse.controller.enabled" .) "true") (eq .Values.server.ingress.enabled true) -}}
 apiVersion: {{ .Values.server.ingress.apiVersion | default (include "ingress.apiVersion" .) }}
 kind: Ingress
 metadata:
@@ -27,6 +27,13 @@ spec:
     - host: {{ .Values.server.ingress.hostname }}
       http:
         paths:
+          {{- if (eq .Values.server.ingress.createCombinedIngress true) }}
+          - path: {{ .Values.server.webapp.ingress.path }}
+              {{- if eq "true" (include "ingress.supportsPathType" .) }}
+            pathType: {{ .Values.server.webapp.ingress.pathType | default .Values.global.ingress.pathType }}
+              {{- end }}
+            backend: {{- include "ingress.backend" (dict "ingressApiVersion" (.Values.server.webapp.ingress.apiVersion | default (include "ingress.apiVersion" .)) "serviceName" (include "lighthouse.webapp.name" .) "servicePort" .Values.server.webapp.service.port . $)  | nindent 14 }}
+          {{- end }}
           - path: {{ .Values.server.ingress.path }}
               {{- if eq "true" (include "ingress.supportsPathType" .) }}
             pathType: {{ .Values.server.ingress.pathType | default .Values.global.ingress.pathType }}

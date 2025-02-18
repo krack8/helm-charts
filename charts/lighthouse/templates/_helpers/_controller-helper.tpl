@@ -71,11 +71,7 @@ app.kubernetes.io/instance: {{ printf "controller" }}
 {{- if .Values.server.apiEndpoint -}}
 {{- printf .Values.server.apiEndpoint }}
 {{- else if and (eq .Values.server.ingress.enabled true) -}}
-{{- if and (eq .Values.server.ingress.createCombinedIngress true) -}}
-{{- printf "%s://%s/server" (ternary "https" "http" (eq .Values.server.ingress.tls.enabled true)) (.Values.server.ingress.hostname) }}
-{{- else -}}
 {{- printf "%s://%s" (ternary "https" "http" (eq .Values.server.ingress.tls.enabled true)) (.Values.server.ingress.hostname) }}
-{{- end }}
 {{- else -}}
 {{- printf "http://%s.%s:%s" (include "lighthouse.controller.name" .) (include "lighthouse.namespace" .) (toString .Values.server.service.port)  }}
 {{- end }}
