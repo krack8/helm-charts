@@ -40,14 +40,18 @@ app.kubernetes.io/instance: {{ printf "webapp" }}
 {{- end }}
 
 {{- define "lighthouse.webapp.ingress.tls.secretName" -}}
-{{- if and (eq .Values.server.webapp.ingress.tls.enabled true) (empty .Values.server.webapp.ingress.tls.secretName) (empty .Values.server.webapp.ingress.tls.crt) (empty .Values.server.webapp.ingress.tls.key) -}}
-{{- printf "%s" (include "lighthouse.controller.ingress.tls.secretName" .) }}
-{{- else if .Values.server.webapp.ingress.tls.secretName -}}
-{{- print .Values.server.webapp.ingress.tls.secretName }}
-{{- else if .Values.global.ingress.tls.secretName -}}
-{{- print .Values.global.ingress.tls.secretName }}
-{{- else -}}
-{{- printf "%s-tls" (include "lighthouse.webapp.ingress.name" .) }}
+{{- if eq .Values.server.ingress.createCombinedIngress false }}
+    {{- if (not (empty .Values.server.webapp.ingress.tls.secretName)) }}
+        {{- print .Values.server.webapp.ingress.tls.secretName }}
+    {{- else if and (not (empty .Values.server.webapp.ingress.tls.crt)) (not (empty .Values.server.webapp.ingress.tls.key)) }}
+        {{- printf "%s-tls" (include "lighthouse.webapp.ingress.name" .) }}
+    {{- else if .Values.global.ingress.tls.secretName -}}
+        {{- print .Values.global.ingress.tls.secretName }}
+    {{- else -}}
+        {{- printf "%s-tls" (include "lighthouse.webapp.ingress.name" .) }}
+    {{- end }}
+{{- else }}
+    {{- printf "%s" (include "lighthouse.controller.ingress.tls.secretName" .) }}
 {{- end }}
 {{- end }}
 

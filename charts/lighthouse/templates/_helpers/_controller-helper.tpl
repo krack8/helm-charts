@@ -90,6 +90,8 @@ app.kubernetes.io/instance: {{ printf "controller" }}
 {{- define "lighthouse.controller.ingress.tls.secretName" -}}
 {{- if .Values.server.ingress.tls.secretName -}}
 {{- print .Values.server.ingress.tls.secretName }}
+{{- else if and (not (empty .Values.server.ingress.tls.crt)) (not (empty .Values.server.ingress.tls.key)) -}}
+{{- printf "%s-tls" (include "lighthouse.controller.ingress.name" .) }}
 {{- else if .Values.global.ingress.tls.secretName -}}
 {{- print .Values.global.ingress.tls.secretName }}
 {{- else -}}
@@ -98,10 +100,12 @@ app.kubernetes.io/instance: {{ printf "controller" }}
 {{- end }}
 
 {{- define "lighthouse.controller.ingressGrpc.tls.secretName" -}}
-{{- if or (eq .Values.server.ingressGrpc.tls.useIngressTls true) (eq .Values.global.ingressGrpc.tls.useIngressTls true) -}}
+{{- if or (eq .Values.server.ingressGrpc.tls.useIngressTls true) -}}
 {{- printf "%s" (include "lighthouse.controller.ingress.tls.secretName" .) }}
 {{- else if .Values.server.ingressGrpc.tls.secretName -}}
 {{- print .Values.server.ingressGrpc.tls.secretName }}
+{{- else if and (not (empty .Values.server.ingressGrpc.tls.crt)) (not (empty .Values.server.ingressGrpc.tls.key)) -}}
+{{- printf "%s-tls" (include "lighthouse.controller.ingressGrpc.name" .) }}
 {{- else if .Values.global.ingressGrpc.tls.secretName -}}
 {{- print .Values.global.ingressGrpc.tls.secretName }}
 {{- else -}}

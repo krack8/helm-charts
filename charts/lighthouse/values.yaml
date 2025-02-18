@@ -27,7 +27,6 @@ global:
     ingressClassName: ""
     pathType: ImplementationSpecific
     tls:
-      enabled: false
       secretName: ""
       crt: ""
       key: ""
@@ -42,8 +41,6 @@ global:
     ingressClassName: ""
     pathType: ImplementationSpecific
     tls:
-      enabled: false
-      useIngressTls: false
       secretName: ""
       crt: ""
       key: ""
@@ -61,7 +58,6 @@ db:
     rootUser:
       username: ""
       password: ""
-      generatedPassword: ""
     persistence:
       size: 1Gi
       storageClassName: ""
@@ -92,7 +88,7 @@ server:
   image:
     repository: ""
     pullPolicy: ""
-    tag: lighthouse-controller-v1.0.0
+    tag: lighthouse-server-v1.0.0
   ingress:
     enabled: false
     createCombinedIngress: false

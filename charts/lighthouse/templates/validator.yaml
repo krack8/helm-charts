@@ -1,0 +1,4 @@
+{{- /*
+  Copyright Krack8, Inc. All Rights Reserved.
+*/}}
+{{- include "lighthouse.inputValidationCheck" . -}}
