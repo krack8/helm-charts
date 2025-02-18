@@ -2,6 +2,7 @@
   Copyright Krack8, Inc. All Rights Reserved.
 */}}
 {{- if eq (include "lighthouse.controller.enabled" .) "true" -}}
+{{- if or (eq .Values.agent.enabled true) (eq .Values.db.mongo.create true) }}
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -23,7 +24,7 @@ spec:
             - -c
             - |
               echo "Cleaning up orphan resources..."
-              {{- if eq .Values.db.mongo.create true -}}
+                {{- if eq .Values.db.mongo.create true -}}
               echo "Checking and deleting DB..."
               if kubectl get sts {{ include "lighthouse.db.mongo.name" . }} -n {{ .Release.Namespace }} >/dev/null 2>&1; then
                 echo "Deleting Secrets..."
@@ -39,7 +40,7 @@ spec:
               else
                 echo "No PVC found. Skipping deletion."
               fi
-              {{- end }}
+                {{- end }}
               echo "Checking for Secrets..."
               if kubectl get secret {{ include "lighthouse.agent.auth.secret.name" . }} -n {{ .Release.Namespace }} >/dev/null 2>&1; then
                 echo "Deleting Secrets..."
@@ -47,4 +48,5 @@ spec:
               else
                 echo "No Secrets found. Skipping deletion."
               fi
+{{- end }}
 {{- end }}
