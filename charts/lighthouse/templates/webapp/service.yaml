@@ -1,7 +1,7 @@
 {{- /*
   Copyright Krack8, Inc. All Rights Reserved.
 */}}
-{{- if eq (include "lighthouse.controller.enabled" .) "true" -}}
+{{- if eq .Values.controller.enabled true -}}
 apiVersion: v1
 kind: Service
 metadata:
@@ -10,10 +10,10 @@ metadata:
   labels:
     {{- include "lighthouse.webapp.labels" . | nindent 4 }}
 spec:
-  type: {{ .Values.server.webapp.service.type }}
+  type: {{ .Values.controller.webapp.service.type }}
   ports:
-    - port: {{ .Values.server.webapp.service.port }}
-      targetPort: {{ .Values.server.webapp.service.targetPort }}
+    - port: {{ .Values.controller.webapp.service.port }}
+      targetPort: {{ .Values.controller.webapp.service.targetPort }}
       protocol: TCP
       name: http
   selector:

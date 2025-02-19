@@ -1,7 +1,7 @@
 {{- /*
   Copyright Krack8, Inc. All Rights Reserved.
 */}}
-{{- if eq (include "lighthouse.controller.enabled" .) "true" -}}
+{{- if eq .Values.controller.enabled true -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -13,8 +13,8 @@ spec:
   selector:
     matchLabels:
       {{- include "lighthouse.controller.selectorLabels" . | nindent 6 }}
-  replicas: {{ .Values.server.replicaCount }}
-  revisionHistoryLimit: {{ .Values.server.revisionHistoryLimit }}
+  replicas: {{ .Values.controller.replicaCount }}
+  revisionHistoryLimit: {{ .Values.controller.revisionHistoryLimit }}
   template:
     metadata:
       labels:
@@ -22,7 +22,7 @@ spec:
     spec:
       serviceAccountName: {{ include "lighthouse.controller.serviceAccount.name" .  }}
       containers:
-        - image: {{ include "lighthouse.controller.image.repository" . }}:{{ .Values.server.image.tag }}
+        - image: {{ include "lighthouse.controller.image.repository" . }}:{{ include "lighthouse.controller.image.tag" . }}
           imagePullPolicy: {{ include "lighthouse.controller.image.pullPolicy" .  }}
           name: lighthouse-controller
           env:
@@ -33,16 +33,16 @@ spec:
                 name: {{ include "lighthouse.controller.configmap.name" . }}
             - secretRef:
                 name: {{ include "lighthouse.controller.secret.name" . }}
-          {{- if .Values.server.resources }}
-          resources: {{- toYaml .Values.server.resources | nindent 12 }}
+          {{- if .Values.controller.resources }}
+          resources: {{- toYaml .Values.controller.resources | nindent 12 }}
           {{- else if .Values.global.resources }}
           resources: {{- toYaml .Values.global.resources | nindent 12 }}
           {{- end }}
           ports:
             - name: http
-              containerPort: {{ .Values.server.service.targetPort }}
+              containerPort: {{ .Values.controller.service.targetPort }}
               protocol: TCP
             - name: grpc
-              containerPort: {{ .Values.server.grpc.targetPort }}
+              containerPort: {{ .Values.controller.grpc.targetPort }}
               protocol: TCP
 {{- end }}

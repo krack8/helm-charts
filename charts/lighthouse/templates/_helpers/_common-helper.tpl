@@ -56,8 +56,8 @@ app.kubernetes.io/managed-by: {{ "Helm" }}
 
 
 {{- define "ingress.apiVersion" -}}
-{{- if not (empty .Values.global.ingress.apiVersion) -}}
-{{- .Values.global.ingress.apiVersion -}}
+{{- if not (empty .Values.ingress.apiVersion) -}}
+{{- .Values.ingress.apiVersion -}}
 {{- else -}}
 {{- $kubeVersion := include "kubeVersion" . -}}
 {{- if and (not (empty $kubeVersion)) (semverCompare "<1.14-0" $kubeVersion) -}}
@@ -117,7 +117,7 @@ service:
 
 
 {{- define "lighthouse.agent.wrokerGroup" -}}
-{{- if and (eq (include "lighthouse.controller.enabled" .) "false") (eq .Values.agent.enabled true) -}}
+{{- if and (eq .Values.controller.enabled false) (eq .Values.agent.enabled true) -}}
 {{- if .Values.agent.group -}}
 {{- printf .Values.agent.group }}
 {{- end }}

@@ -1,7 +1,7 @@
 {{- /*
   Copyright Krack8, Inc. All Rights Reserved.
 */}}
-{{- if and (eq (include "lighthouse.controller.enabled" .) "true") (eq .Values.db.mongo.create true) -}}
+{{- if and (eq .Values.controller.enabled true) (eq .Values.db.mongo.create true) -}}
 apiVersion: v1
 kind: Service
 metadata:
@@ -15,6 +15,6 @@ spec:
   {{- include "lighthouse.db.mongo.selectorLabels" . | nindent 4 }}
   ports:
     - protocol: TCP
-      port: {{ .Values.db.mongo.port }}
-      targetPort: {{ .Values.db.mongo.targetPort }}
+      port: {{ include "lighthouse.db.mongo.port" . }}
+      targetPort: {{ include "lighthouse.db.mongo.targetPort" . }}
 {{- end }}

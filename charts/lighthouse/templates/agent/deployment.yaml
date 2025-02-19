@@ -26,7 +26,7 @@ spec:
           image: bitnami/kubectl:latest
           command: ['sh', '-c', 'until kubectl get secret {{ include "lighthouse.agent.auth.secret.name" . }} -n {{ .Release.Namespace }}; do echo "Waiting for agent-secret..."; sleep 5; done']
       containers:
-        - image: {{ include "lighthouse.agent.image.repository" . }}:{{ .Values.agent.image.tag }}
+        - image: {{ include "lighthouse.agent.image.repository" . }}:{{ include "lighthouse.agent.image.tag" . }}
           imagePullPolicy: {{ include "lighthouse.agent.image.pullPolicy" .  }}
           name: lighthouse-agent
           env:
@@ -35,12 +35,14 @@ spec:
           envFrom:
             - configMapRef:
                 name: {{ include "lighthouse.agent.configmap.name" . }}
+            {{- if not (empty (include "lighthouse.controller.ingressGrpc.tls.ca" .)) }}
             - secretRef:
                 name: {{ include "lighthouse.agent.secret.name" . }}
+            {{- end }}
             - secretRef:
                 name: {{ include "lighthouse.agent.auth.secret.name" . }}
           {{- if .Values.agent.resources }}
-          resources: {{- toYaml .Values.server.resources | nindent 12 }}
+          resources: {{- toYaml .Values.controller.resources | nindent 12 }}
           {{- else if .Values.global.resources }}
           resources: {{- toYaml .Values.global.resources | nindent 12 }}
           {{- end }}

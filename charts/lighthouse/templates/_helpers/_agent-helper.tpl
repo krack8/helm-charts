@@ -41,17 +41,29 @@ app.kubernetes.io/instance: {{ printf "agent" }}
 {{- end }}
 
 {{- define "lighthouse.agent.image.repository" -}}
-{{- if .Values.agent.image.repository -}}
+{{- if not (empty .Values.agent.image.repository) -}}
 {{- printf .Values.agent.image.repository }}
-{{- else -}}
+{{- else if not (empty .Values.global.image.repository) -}}
 {{- printf .Values.global.image.repository }}
+{{- else }}
+{{- printf "ghcr.io/krack8/lighthouse" }}
 {{- end }}
 {{- end }}
 
 {{- define "lighthouse.agent.image.pullPolicy" -}}
-{{- if .Values.agent.image.pullPolicy -}}
+{{- if not (empty .Values.agent.image.pullPolicy) -}}
 {{- printf .Values.agent.image.pullPolicy }}
-{{- else -}}
+{{- else if not (empty .Values.global.image.pullPolicy) -}}
 {{- printf .Values.global.image.pullPolicy }}
+{{- else }}
+{{- printf "IfNotPresent" }}
+{{- end }}
+{{- end }}
+
+{{- define "lighthouse.agent.image.tag" -}}
+{{- if not (empty .Values.agent.image.tag) -}}
+{{- printf .Values.agent.image.tag }}
+{{- else }}
+{{- printf "agent-v1.0.0" }}
 {{- end }}
 {{- end }}

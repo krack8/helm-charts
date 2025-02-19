@@ -1,7 +1,7 @@
 {{- /*
   Copyright Krack8, Inc. All Rights Reserved.
 */}}
-{{- if and (eq (include "lighthouse.controller.enabled" .) "true") (eq .Values.db.mongo.create true) -}}
+{{- if and (eq .Values.controller.enabled true) (eq .Values.db.mongo.create true) -}}
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -11,7 +11,7 @@ metadata:
     {{- include "lighthouse.db.mongo.labels" . | nindent 4 }}
 spec:
   serviceName: {{ include "lighthouse.db.mongo.headlessServiceName" . }}
-  replicas: {{ .Values.db.mongo.replicaCount }}
+  replicas: {{ include "lighthouse.db.mongo.replicaCount" . }}
   selector:
     matchLabels:
       {{- include "lighthouse.db.mongo.selectorLabels" . | nindent 6 }}
@@ -23,10 +23,10 @@ spec:
       serviceAccountName: {{ include "lighthouse.controller.serviceAccount.name" .  }}
       containers:
         - name: {{ include "lighthouse.db.mongo.name" . }}
-          image: {{ .Values.db.mongo.image.repository }}:{{ .Values.db.mongo.image.tag }}
-          imagePullPolicy: {{ .Values.db.mongo.image.pullPolicy }}
+          image: {{ include "lighthouse.db.mongo.image.repository" . }}:{{ include "lighthouse.db.mongo.image.tag" . }}
+          imagePullPolicy: {{ include "lighthouse.db.mongo.image.pullPolicy" . }}
           ports:
-            - containerPort: {{ .Values.db.mongo.targetPort }}
+            - containerPort: {{ include "lighthouse.db.mongo.targetPort" . }}
           envFrom:
             - secretRef:
                 name: {{ include "lighthouse.db.mongo.secretName" . }}
@@ -48,10 +48,10 @@ spec:
         {{- end }}
       spec:
         accessModes:
-          - ReadWriteOnce
+          - {{ include "lighthouse.db.mongo.persistence.accessMode" . }}
         resources:
           requests:
-            storage: {{ .Values.db.mongo.persistence.size | quote }}
+            storage: {{ include "lighthouse.db.mongo.persistence.size" . | quote }}
         {{- if not (empty .Values.db.mongo.persistence.storageClassName) }}
         storageClassName: {{ .Values.db.mongo.persistence.storageClassName | quote }}
         {{- end }}

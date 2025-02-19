@@ -1,42 +1,42 @@
 {{- /*
   Copyright Krack8, Inc. All Rights Reserved.
 */}}
-{{- if and (eq (include "lighthouse.controller.enabled" .) "true") (eq .Values.server.ingressGrpc.enabled true) -}}
-apiVersion: {{ .Values.server.ingress.apiVersion | default (include "ingress.apiVersion" .) }}
+{{- if and (eq .Values.controller.enabled true) (eq .Values.ingressGrpc.enabled true) -}}
+apiVersion: {{ include "ingress.apiVersion" . }}
 kind: Ingress
 metadata:
   name: {{ include "lighthouse.controller.ingressGrpc.name" . }}
   namespace: {{ include "lighthouse.namespace" . }}
   labels:
     {{- include "lighthouse.controller.labels" . | nindent 4 }}
-  {{- if or (.Values.server.ingressGrpc.annotations) (.Values.global.ingressGrpc.annotations) }}
+  {{- if .Values.ingressGrpc.annotations }}
   annotations:
-     {{- $annotations := .Values.server.ingressGrpc.annotations | default .Values.global.ingressGrpc.annotations }}
+     {{- $annotations := .Values.ingressGrpc.annotations }}
      {{- range $key, $value := $annotations }}
      {{ $key }}: {{ $value | quote }}
      {{- end }}
   {{- end }}
 spec:
   {{- if (eq "true" (include "ingress.supportsIngressClassname" .)) }}
-    {{- if or (.Values.server.ingressGrpc.ingressClassName) (.Values.global.ingressGrpc.ingressClassName) }}
-  ingressClassName: {{ .Values.server.ingressGrpc.ingressClassName | default .Values.global.ingressGrpc.ingressClassName | toString | quote }}
+    {{- if not (empty .Values.ingressGrpc.ingressClassName) }}
+  ingressClassName: {{ .Values.ingressGrpc.ingressClassName | toString | quote }}
     {{- end }}
   {{- end }}
   rules:
-      {{- if .Values.server.ingressGrpc.hostname }}
-    - host: {{ .Values.server.ingressGrpc.hostname }}
+      {{- if .Values.ingressGrpc.hostname }}
+    - host: {{ .Values.ingressGrpc.hostname }}
       http:
         paths:
-          - path: {{ .Values.server.ingressGrpc.path }}
+          - path: /
               {{- if eq "true" (include "ingress.supportsPathType" .) }}
-            pathType: {{ .Values.server.ingressGrpc.pathType | default .Values.global.ingressGrpc.pathType }}
+            pathType: {{ .Values.ingressGrpc.pathType }}
               {{- end }}
-            backend: {{- include "ingress.backend" (dict "ingressApiVersion" (.Values.server.ingress.apiVersion | default (include "ingress.apiVersion" .)) "serviceName" (include "lighthouse.controller.name" .) "servicePort" .Values.server.grpc.port . $)  | nindent 14 }}
+            backend: {{- include "ingress.backend" (dict "ingressApiVersion" (include "ingress.apiVersion" .) "serviceName" (include "lighthouse.controller.name" .) "servicePort" .Values.controller.grpc.port . $)  | nindent 14 }}
       {{- end }}
-    {{- if eq .Values.server.ingressGrpc.tls.enabled true }}
+    {{- if eq .Values.ingressGrpc.tls.enabled true }}
   tls:
     - hosts:
-        - {{ .Values.server.ingressGrpc.hostname }}
+        - {{ .Values.ingressGrpc.hostname }}
       secretName: {{ include "lighthouse.controller.ingressGrpc.tls.secretName" . }}
     {{- end }}
 {{- end }}

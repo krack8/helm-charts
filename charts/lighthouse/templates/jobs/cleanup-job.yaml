@@ -1,7 +1,7 @@
 {{- /*
   Copyright Krack8, Inc. All Rights Reserved.
 */}}
-{{- if eq (include "lighthouse.controller.enabled" .) "true" -}}
+{{- if eq .Values.controller.enabled true -}}
 {{- if or (eq .Values.agent.enabled true) (eq .Values.db.mongo.create true) }}
 apiVersion: batch/v1
 kind: Job

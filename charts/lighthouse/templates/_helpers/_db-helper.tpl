@@ -53,7 +53,7 @@ app.kubernetes.io/instance: {{ printf "mongo" }}
 {{- if .Values.db.mongo.uri -}}
 {{- printf .Values.db.mongo.uri }}
 {{- else if (eq .Values.db.mongo.create true) -}}
-{{- printf "mongodb://%s:%s@%s:%s" (include "lighthouse.db.mongo.rootUsername" .) (include "lighthouse.db.mongo.rootPassword" .) (include "lighthouse.db.mongo.endpoint" .) (toString .Values.db.mongo.port) }}
+{{- printf "mongodb://%s:%s@%s:%s" (include "lighthouse.db.mongo.rootUsername" .) (include "lighthouse.db.mongo.rootPassword" .) (include "lighthouse.db.mongo.endpoint" .) (toString (include "lighthouse.db.mongo.port" .)) }}
 {{- else -}}
 {{- printf "mongodb://localhost:27017" }}
 {{- end }}
@@ -70,3 +70,53 @@ app.kubernetes.io/instance: {{ printf "mongo" }}
 {{- printf "lighthouse" }}
 {{- end }}
 {{- end }}
+
+{{- define "lighthouse.db.mongo.replicaCount" -}}
+{{- .Values.db.mongo.replicaCount }}
+{{- end }}
+
+{{- define "lighthouse.db.mongo.image.repository" -}}
+{{- if not (empty .Values.db.mongo.image.repository) -}}
+{{- printf .Values.db.mongo.image.repository }}
+{{- else }}
+{{- printf "mongo" }}
+{{- end }}
+{{- end }}
+
+{{- define "lighthouse.db.mongo.image.pullPolicy" -}}
+{{- if not (empty .Values.db.mongo.image.pullPolicy) -}}
+{{- printf .Values.db.mongo.image.pullPolicy }}
+{{- else }}
+{{- printf "IfNotPresent" }}
+{{- end }}
+{{- end }}
+
+{{- define "lighthouse.db.mongo.image.tag" -}}
+{{- if not (empty .Values.db.mongo.image.tag) -}}
+{{- printf .Values.db.mongo.image.tag }}
+{{- else }}
+{{- print "latest" }}
+{{- end }}
+{{- end }}
+
+{{- define "lighthouse.db.mongo.port" -}}
+{{- .Values.db.mongo.port }}
+{{- end }}
+
+{{- define "lighthouse.db.mongo.targetPort" -}}
+{{- .Values.db.mongo.targetPort }}
+{{- end }}
+
+{{- define "lighthouse.db.mongo.persistence.accessMode" -}}
+{{- if not (empty .Values.db.mongo.persistence.accessMode) -}}
+{{- printf .Values.db.mongo.persistence.accessMode }}
+{{- else }}
+{{- print "ReadWriteOnce" }}
+{{- end }}
+{{- end }}
+
+{{- define "lighthouse.db.mongo.persistence.size" -}}
+{{- printf .Values.db.mongo.persistence.size }}
+{{- end }}
+
+

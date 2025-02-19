@@ -2,7 +2,7 @@
 global:
   runMode: "PRODUCTION"
   image:
-    repository: quay.io/klovercloud/krack8
+    repository: ghcr.io/krack8/lighthouse
     pullPolicy: IfNotPresent
   ## @param global.resources Set container requests and limits for different resources like CPU or memory
   ## e.g:
@@ -15,36 +15,6 @@ global:
   ##     memory: 1024Mi
   ##
   resources: {}
-  ingress:
-    apiVersion: ""
-    ## @param global.ingress.annotations Set annotations for ingress
-    ## e.g:
-    ## annotations:
-    ##   nginx.ingress.kubernetes.io/rewrite-target: /
-    ##   cert-manager.io/cluster-issuer: cluster-issuer-name
-    ##
-    annotations: {}
-    ingressClassName: ""
-    pathType: ImplementationSpecific
-    tls:
-      secretName: ""
-      crt: ""
-      key: ""
-      ca: ""
-  ingressGrpc:
-    ## e.g:
-    ## annotations:
-    ##   nginx.ingress.kubernetes.io/rewrite-target: /
-    ##   cert-manager.io/cluster-issuer: cluster-issuer-name
-    ##
-    annotations: {}
-    ingressClassName: ""
-    pathType: ImplementationSpecific
-    tls:
-      secretName: ""
-      crt: ""
-      key: ""
-      ca: ""
   kubeVersion: ""
 
 db:
@@ -62,6 +32,7 @@ db:
       size: 1Gi
       storageClassName: ""
       annotations: {}
+      accessMode: ReadWriteOnce
     port: 27017
     targetPort: 27017
     uri: ""
@@ -71,11 +42,10 @@ user:
   email: ""
   password: ""
 
-server:
+controller:
   enabled: false
   replicaCount: 1
   revisionHistoryLimit: 0
-  url: ""
   apiEndpoint: ""
   resources: {}
   service:
@@ -83,51 +53,13 @@ server:
     port: 80
     targetPort: 8080
   grpc:
+    url: ""
     port: 50051
     targetPort: 50051
   image:
     repository: ""
     pullPolicy: ""
-    tag: lighthouse-server-v1.0.0
-  ingress:
-    enabled: false
-    createCombinedIngress: false
-    apiVersion: ""
-    ## e.g:
-    ## annotations:
-    ##   nginx.ingress.kubernetes.io/rewrite-target: /
-    ##   cert-manager.io/cluster-issuer: cluster-issuer-name
-    ##
-    annotations: {}
-    ingressClassName: ""
-    hostname: ""
-    path: /api
-    pathType: ImplementationSpecific
-    tls:
-      enabled: false
-      secretName: ""
-      crt: ""
-      key: ""
-      ca: ""
-  ingressGrpc:
-    enabled: false
-    ## e.g:
-    ## annotations:
-    ##   nginx.ingress.kubernetes.io/rewrite-target: /
-    ##   cert-manager.io/cluster-issuer: cluster-issuer-name
-    ##
-    annotations: {}
-    ingressClassName: ""
-    hostname: ""
-    path: /
-    pathType: ImplementationSpecific
-    tls:
-      enabled: false
-      useIngressTls: false
-      secretName: ""
-      crt: ""
-      key: ""
-      ca: ""
+    tag: controller-v0.1.0
   webapp:
     replicaCount: 1
     revisionHistoryLimit: 0
@@ -139,26 +71,7 @@ server:
     image:
       repository: ""
       pullPolicy: ""
-      tag: lighthouse-webapp-v1.0.0
-    ingress:
-      enabled: false
-      apiVersion: ""
-      ## e.g:
-      ## annotations:
-      ##   nginx.ingress.kubernetes.io/rewrite-target: /
-      ##   cert-manager.io/cluster-issuer: cluster-issuer-name
-      ##
-      annotations: { }
-      ingressClassName: ""
-      hostname: ""
-      path: /
-      pathType: ImplementationSpecific
-      tls:
-        enabled: false
-        secretName: ""
-        crt: ""
-        key: ""
-        ca: ""
+      tag: webapp-v0.1.0
 
 agent:
   enabled: false
@@ -176,8 +89,44 @@ agent:
   image:
     repository: ""
     pullPolicy: ""
-    tag: lighthouse-agent-v1.0.0
+    tag: agent-v0.1.0
 
 auth:
   enabled: false
   token: ""
+
+ingress:
+  enabled: false
+  apiVersion: ""
+  ## e.g:
+  ## annotations:
+  ##   nginx.ingress.kubernetes.io/rewrite-target: /
+  ##   cert-manager.io/cluster-issuer: cluster-issuer-name
+  ##
+  annotations: {}
+  ingressClassName: ""
+  hostname: ""
+  pathType: ImplementationSpecific
+  tls:
+    enabled: false
+    secretName: ""
+    crt: ""
+    key: ""
+    ca: ""
+ingressGrpc:
+  enabled: false
+  ## e.g:
+  ## annotations:
+  ##   nginx.ingress.kubernetes.io/rewrite-target: /
+  ##   cert-manager.io/cluster-issuer: cluster-issuer-name
+  ##
+  annotations: {}
+  ingressClassName: ""
+  hostname: ""
+  pathType: ImplementationSpecific
+  tls:
+    enabled: false
+    secretName: ""
+    crt: ""
+    key: ""
+    ca: ""

@@ -1,7 +1,7 @@
 {{- /*
   Copyright Krack8, Inc. All Rights Reserved.
 */}}
-{{- if eq (include "lighthouse.controller.enabled" .) "true" -}}
+{{- if eq .Values.controller.enabled true -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -13,8 +13,8 @@ spec:
   selector:
     matchLabels:
       {{- include "lighthouse.webapp.selectorLabels" . | nindent 6 }}
-  replicas: {{ .Values.server.webapp.replicaCount }}
-  revisionHistoryLimit: {{ .Values.server.webapp.revisionHistoryLimit }}
+  replicas: {{ .Values.controller.webapp.replicaCount }}
+  revisionHistoryLimit: {{ .Values.controller.webapp.revisionHistoryLimit }}
   template:
     metadata:
       labels:
@@ -22,19 +22,19 @@ spec:
     spec:
       serviceAccountName: {{ include "lighthouse.controller.serviceAccount.name" .  }}
       containers:
-        - image: {{ include "lighthouse.webapp.image.repository" . }}:{{ .Values.server.webapp.image.tag }}
+        - image: {{ include "lighthouse.webapp.image.repository" . }}:{{ include "lighthouse.webapp.image.tag" . }}
           imagePullPolicy: {{ include "lighthouse.webapp.image.pullPolicy" .  }}
           name: lighthouse-webapp
           envFrom:
             - configMapRef:
                 name: {{ include "lighthouse.webapp.configmap.name" . }}
-          {{- if .Values.server.webapp.resources }}
-          resources: {{- toYaml .Values.server.resources | nindent 12 }}
+          {{- if .Values.controller.webapp.resources }}
+          resources: {{- toYaml .Values.controller.resources | nindent 12 }}
           {{- else if .Values.global.resources }}
           resources: {{- toYaml .Values.global.resources | nindent 12 }}
           {{- end }}
           ports:
             - name: http
-              containerPort: {{ .Values.server.webapp.service.targetPort }}
+              containerPort: {{ .Values.controller.webapp.service.targetPort }}
               protocol: TCP
 {{- end }}

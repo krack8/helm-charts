@@ -1,7 +1,7 @@
 {{- /*
   Copyright Krack8, Inc. All Rights Reserved.
 */}}
-{{- if eq (include "lighthouse.controller.enabled" .) "true" -}}
+{{- if eq .Values.controller.enabled true -}}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -10,7 +10,7 @@ metadata:
   labels:
     {{- include "lighthouse.controller.labels" . | nindent 4 }}
 data:
-  SERVER_URL: {{ include "lighthouse.controller.grpc.url" . | toString | quote }}
+  GRPC_SERVER: {{ include "lighthouse.controller.grpc.url" . | toString | quote }}
   PORT: {{ .Values.agent.service.port | toString | quote }}
   AGENT_SECRET_NAME: {{ include "lighthouse.agent.auth.secret.name" . | toString | quote }}
   RESOURCE_NAMESPACE: {{ include "lighthouse.namespace" . | toString | quote }}
