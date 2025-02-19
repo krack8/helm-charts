@@ -42,7 +42,7 @@ spec:
             - secretRef:
                 name: {{ include "lighthouse.agent.auth.secret.name" . }}
           {{- if .Values.agent.resources }}
-          resources: {{- toYaml .Values.controller.resources | nindent 12 }}
+          resources: {{- toYaml .Values.agent.resources | nindent 12 }}
           {{- else if .Values.global.resources }}
           resources: {{- toYaml .Values.global.resources | nindent 12 }}
           {{- end }}

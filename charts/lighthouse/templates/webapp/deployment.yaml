@@ -29,7 +29,7 @@ spec:
             - configMapRef:
                 name: {{ include "lighthouse.webapp.configmap.name" . }}
           {{- if .Values.controller.webapp.resources }}
-          resources: {{- toYaml .Values.controller.resources | nindent 12 }}
+          resources: {{- toYaml .Values.controller.webapp.resources | nindent 12 }}
           {{- else if .Values.global.resources }}
           resources: {{- toYaml .Values.global.resources | nindent 12 }}
           {{- end }}
