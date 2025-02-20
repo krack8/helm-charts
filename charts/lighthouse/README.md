@@ -35,7 +35,7 @@ by setting `controller.enabled` to `true` and `agent.enabled` to `true`.
 
 To install the lighthouse chart with the release name `my-release`, use the following command:
 ```
-helm install my-release krack8/lighthouse --create-namespace --namespace my-namepsace --version 1.0.0
+helm install my-release krack8/lighthouse --create-namespace --namespace my-namepsace --version 1.0.0 \
 --set controller.enabled=true \
 --set agent.enabled=true
 ```
