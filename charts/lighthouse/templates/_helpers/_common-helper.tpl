@@ -144,21 +144,21 @@ service:
 
 {{- define "lighthouse.contoller.grpc.tls.enabled" -}}
 {{- if and (eq .Values.controller.enabled true) (eq .Values.agent.enabled true) -}}
-{{ printf "FALSE" }}
+{{ printf "False" }}
 {{- else if eq .Values.config.controller.grpc.tls.enabled true -}}
-{{ printf "TRUE" }}
+{{ printf "True" }}
 {{- else -}}
-{{ printf "FALSE" }}
+{{ printf "False" }}
 {{- end }}
 {{- end }}
 
 {{- define "lighthouse.contoller.grpc.tls.skipVerification" -}}
 {{- if and (eq .Values.controller.enabled true) (eq .Values.agent.enabled true) -}}
-{{ printf "TRUE" }}
+{{ printf "True" }}
 {{- else if eq .Values.config.controller.grpc.tls.skipVerification true -}}
-{{ printf "TRUE" }}
+{{ printf "True" }}
 {{- else -}}
-{{ printf "FALSE" }}
+{{ printf "False" }}
 {{- end }}
 {{- end }}
 
