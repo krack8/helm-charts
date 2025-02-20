@@ -97,7 +97,7 @@ app.kubernetes.io/instance: {{ printf "mongo" }}
 {{- if not (empty .Values.db.mongo.internal.image.tag) -}}
 {{- printf .Values.db.mongo.internal.image.tag }}
 {{- else }}
-{{- print "latest" }}
+{{- print "7.0.16-jammy" }}
 {{- end }}
 {{- end }}
 

@@ -40,7 +40,7 @@ db:
       image:
         repository: "mongo"
         pullPolicy: "IfNotPresent"
-        tag: latest
+        tag: "7.0.16-jammy"
       auth:
         username: ""
         password: ""

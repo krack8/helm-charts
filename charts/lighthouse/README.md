@@ -263,7 +263,7 @@ MIIFATCCA+mgAwIBAgISBK65Pjc/MdGCizcwmq40d+sNMA0GCSqGSIb3DQEBCwUA
 | `db.mongo.internal.replicaCount`                 | The number of lighthouse mongodb pods to run                                | `1`               |
 | `db.mongo.internal.image.repository`             | Lighthouse mongodb image repository                                         | `"mongo"`         |
 | `db.mongo.internal.image.pullPolicy`             | Lighthouse mongodb image pull policy                                        | `"IfNotPresent"`  |
-| `db.mongo.internal.image.tag`                    | Lighthouse mongodb image tag                                                | `"latest"`        |
+| `db.mongo.internal.image.tag`                    | Lighthouse mongodb image tag                                                | `"7.0.16-jammy"`  |
 | `db.mongo.internal.auth.username`                | Username of lighthouse mongodb root user                                    | `"root"`          |
 | `db.mongo.internal.auth.password`                | Password of lighthouse mongodb root user                                    | `"mongo123!"`     |
 | `db.mongo.internal.auth.databaseName`            | Database name for lighthouse                                                | `"lighthouse"`    |
@@ -275,7 +275,6 @@ MIIFATCCA+mgAwIBAgISBK65Pjc/MdGCizcwmq40d+sNMA0GCSqGSIb3DQEBCwUA
 | `db.mongo.external.enabled`                      | For enabling external mongo database integration with Lighthouse controller | `false`           |
 | `db.mongo.external.uri`                          | External mongodb connection string                                          | `""`              |
 | `db.mongo.external.databaseName`                 | External mongodb database name for lighthouse                               | `""`              |
-
 
 ### Lighthouse default user parameters
 
