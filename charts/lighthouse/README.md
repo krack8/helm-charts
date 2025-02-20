@@ -200,9 +200,135 @@ MIIFATCCA+mgAwIBAgISBK65Pjc/MdGCizcwmq40d+sNMA0GCSqGSIb3DQEBCwUA
 
 ### Common parameters
 
-| Name                | Description                                                                       | Value           |
-| ------------------- |-----------------------------------------------------------------------------------| --------------- |
-| `kubeVersion`       | Override Kubernetes version                                                       | `""`            |
-| `nameOverride`      | String to partially override lighthouse.fullname. Default value is the chart name | `""`            |
-| `fullnameOverride`  | String to fully override lighthouse.fullname. Default value is the chart name                                    | `""`            |
-| `commonLabels`      | Labels to add to all deployed objects                                             | `{}`            |
+| Name               | Description                                                                       | Value |
+|--------------------|-----------------------------------------------------------------------------------|-------|
+| `kubeVersion`      | Override Kubernetes version                                                       | `""`  |
+| `nameOverride`     | String to partially override lighthouse.fullname. Default value is the chart name | `""`  |
+| `fullnameOverride` | String to fully override lighthouse.fullname. Default value is the chart name     | `""`  |
+| `commonLabels`     | Labels to add to all deployed objects                                             | `{}`  |
+
+### Lighthouse controller parameters
+
+| Name                              | Description                                                                                          | Value         |
+|-----------------------------------|------------------------------------------------------------------------------------------------------|---------------|
+| `controller.enabled`              | Enable the lighthouse controller and webapp                                                          | `false`       |
+| `controller.replicaCount`         | The number of lighthouse controller pods to run                                                      | `1`           |
+| `controller.revisionHistoryLimit` | The number of lighthouse controller pod revision history limit                                       | `0`           |
+| `controller.apiEndpoint`          | The lighthouse controller api endpoint for accessing the http server                                 | `""`          |
+| `controller.resources`            | Set lighthouse controller's container requests and limits for different resources like CPU or memory | `{}`          |
+| `controller.service.type`         | Lighthouse controller Kubernetes service type                                                        | `"ClusterIP"` |
+| `controller.service.port`         | Lighthouse controller's Kubernetes service port                                                      | `80`          |
+| `controller.service.targetPort`   | Lighthouse controller's deployment container port                                                    | `8080`        |
+| `controller.grpc.port`            | Lighthouse controller's Kubernetes service port for gRPC server                                      | `50051`       |
+| `controller.grpc.targetPort`      | Lighthouse controller's deployment container port for gRPC server                                    | `50051`       |
+| `controller.image.repository`     | Lighthouse controller image repository                                                               | `""`          |
+| `controller.image.pullPolicy`     | Lighthouse controller image pull policy                                                              | `""`          |
+| `controller.image.tag`            | Lighthouse controller image tag                                                                      | `""`          |
+
+### Lighthouse webapp parameters
+
+| Name                                     | Description                                                                                      | Value         |
+|------------------------------------------|--------------------------------------------------------------------------------------------------|---------------|
+| `controller.webapp.replicaCount`         | The number of lighthouse webapp pods to run                                                      | `1`           |
+| `controller.webapp.revisionHistoryLimit` | The number of lighthouse webapp pod revision history limit                                       | `0`           |
+| `controller.webapp.resources`            | Set lighthouse webapp's container requests and limits for different resources like CPU or memory | `{}`          |
+| `controller.webapp.service.type`         | Lighthouse webapp Kubernetes service type                                                        | `"ClusterIP"` |
+| `controller.webapp.service.port`         | Lighthouse webapp's Kubernetes service port                                                      | `80`          |
+| `controller.webapp.service.targetPort`   | Lighthouse webapp's deployment container port                                                    | `8000`        |
+| `controller.webapp.image.repository`     | Lighthouse webapp image repository                                                               | `""`          |
+| `controller.webapp.image.pullPolicy`     | Lighthouse webapp image pull policy                                                              | `""`          |
+| `controller.webapp.image.tag`            | Lighthouse webapp image tag                                                                      | `""`          |
+
+### Lighthouse agent parameters
+
+| Name                         | Description                                                                                          | Value               |
+|------------------------------|------------------------------------------------------------------------------------------------------|---------------------|
+| `agent.enabled`              | Enable the lighthouse agent                                                                          | `false`             |
+| `agent.replicaCount`         | The number of lighthouse webapp pods to run                                                          | `1`                 |
+| `agent.revisionHistoryLimit` | The number of lighthouse agent pod revision history limit                                            | `0`                 |
+| `agent.resources`            | Set lighthouse agent's container requests and limits for different resources like CPU or memory      | `{}`                |
+| `agent.group`                | Lighthouse agent group name. Generated by the **Lighthouse Controller**                              | `""`                |
+| `agent.defaultClusterName`   | The initial cluster name if **Lighthouse Controller** and **Lighthouse Agent** installed combinedly. | `"Default-cluster"` |
+| `agent.service.port`         | Lighthouse agent's deployment container port                                                         | `8080`              |
+| `agent.image.repository`     | Lighthouse agent image repository                                                                    | `""`                |
+| `agent.image.pullPolicy`     | Lighthouse agent image pull policy                                                                   | `""`                |
+| `agent.image.tag`            | Lighthouse agent image tag                                                                           | `""`                |
+
+
+### Lighthouse database parameters
+
+| Name                                             | Description                                                                 | Value             |
+|--------------------------------------------------|-----------------------------------------------------------------------------|-------------------|
+| `db.mongo.internal.enabled`                      | Enables the creation of lighthouse mongodb                                  | `true`            |
+| `db.mongo.internal.replicaCount`                 | The number of lighthouse mongodb pods to run                                | `1`               |
+| `db.mongo.internal.image.repository`             | Lighthouse mongodb image repository                                         | `"mongo"`         |
+| `db.mongo.internal.image.pullPolicy`             | Lighthouse mongodb image pull policy                                        | `"IfNotPresent"`  |
+| `db.mongo.internal.image.tag`                    | Lighthouse mongodb image tag                                                | `"latest"`        |
+| `db.mongo.internal.auth.username`                | Username of lighthouse mongodb root user                                    | `"root"`          |
+| `db.mongo.internal.auth.password`                | Password of lighthouse mongodb root user                                    | `"mongo123!"`     |
+| `db.mongo.internal.auth.databaseName`            | Database name for lighthouse                                                | `"lighthouse"`    |
+| `db.mongo.internal.persistence.size`             | Database persistent volume size                                             | `"1Gi"`           |
+| `db.mongo.internal.persistence.storageClassName` | Cluster storage class name for persistent volume                            | `""`              |
+| `db.mongo.internal.persistence.annotations`      | Annotations for persistent volume                                           | `{}`              |
+| `db.mongo.internal.persistence.accessMode`       | Access mode for persistent volume                                           | `"ReadWriteOnce"` |
+| `db.mongo.internal.port`                         | Database Kubernetes service port                                            | `27017`           |
+| `db.mongo.external.enabled`                      | For enabling external mongo database integration with Lighthouse controller | `false`           |
+| `db.mongo.external.uri`                          | External mongodb connection string                                          | `""`              |
+| `db.mongo.external.databaseName`                 | External mongodb database name for lighthouse                               | `""`              |
+
+
+### Lighthouse default user parameters
+
+| Name            | Description                      | Value                 |
+|-----------------|----------------------------------|-----------------------|
+| `user.email`    | Lighthouse default user email    | `"admin@default.com"` |
+| `user.password` | Lighthouse default user password | `"admin123`           |
+
+
+### Lighthouse configuration parameters
+
+| Name                                          | Description                                                   | Value   |
+|-----------------------------------------------|---------------------------------------------------------------|---------|
+| `config.controller.grpc.host`                 | Lighthouse controller grpc server host                        | `""`    |
+| `config.controller.grpc.tls.enabled`          | Lighthouse controller grpc server TLS                         | `false` |
+| `config.controller.grpc.tls.skipVerification` | Lighthouse controller grpc server TLS skip verification check | `true`  |
+| `config.controller.grpc.tls.ca`               | Lighthouse controller grpc server TLS custom ca               | `""`    |
+
+### Lighthouse authentication parameters
+
+| Name         | Description                                        | Value   |
+|--------------|----------------------------------------------------|---------|
+| `auth.token` | Auth token for connecting to Lighthouse Controller | `""`    |
+
+### Lighthouse ingress parameters
+
+| Name                       | Description                                                                                                                        | Value                      |
+|----------------------------|------------------------------------------------------------------------------------------------------------------------------------|----------------------------|
+| `ingress.enabled`          | Enables the creation of an ingress for Lighthouse controller http server                                                           | `false`                    |
+| `ingress.apiVersion`       | Ingress API version for Lighthouse controller http server                                                                          | `""`                       |
+| `ingress.hostname`         | Ingress hostname for the Lighthouse http server ingress                                                                            | `""`                       |
+| `ingress.annotations`      | Annotations for the Lighthouse http server ingress. To enable certificate autogeneration, place here your cert-manager annotations | `{}`                       |
+| `ingress.ingressClassName` | IngressClass that will be be used to implement the Ingress (Kubernetes 1.18+)                                                      | `""`                       |
+| `ingress.pathType`         | Path type for the Lighthouse http server ingress                                                                                   | `"ImplementationSpecific"` |
+| `ingress.tls.enabled`      | Enable TLS for the Lighthouse http server ingress                                                                                  | `false`                    |
+| `ingress.tls.secretName`   | TLS secret name consisting `tls.crt`, `tls.key` and `ca.crt`(if needed)                                                            | `""`                       |
+| `ingress.tls.crt`          | TLS certificate for ingress                                                                                                        | `""`                       |
+| `ingress.tls.key`          | TLS certificate private key for ingress                                                                                            | `""`                       |
+| `ingress.tls.ca`           | TLS custom certificate authority for ingress                                                                                       | `""`                       |
+
+### Lighthouse gRPC ingress parameters
+
+| Name                           | Description                                                                                                                                                                          | Value                      |
+|--------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------|
+| `ingressGrpc.enabled`          | Enables the creation of an ingress for Lighthouse controller gRPC server                                                                                                             | `false`                    |
+| `ingressGrpc.apiVersion`       | Ingress API version for Lighthouse controller gRPC server                                                                                                                            | `""`                       |
+| `ingressGrpc.hostname`         | Ingress hostname for the Lighthouse gRPC server ingress                                                                                                                              | `""`                       |
+| `ingressGrpc.annotations`      | Annotations for the Lighthouse gRPC server ingress. To enable gRPC support, place gRPC annotation and to enable certificate autogeneration, place here your cert-manager annotations | `{}`                       |
+| `ingressGrpc.ingressClassName` | IngressClass that will be be used to implement the Ingress (Kubernetes 1.18+)                                                                                                        | `""`                       |
+| `ingressGrpc.pathType`         | Path type for the Lighthouse gRPC server ingress                                                                                                                                     | `"ImplementationSpecific"` |
+| `ingressGrpc.tls.enabled`      | Enable TLS for the Lighthouse gRPC server ingress                                                                                                                                    | `false`                    |
+| `ingressGrpc.tls.secretName`   | TLS secret name consisting `tls.crt`, `tls.key` and `ca.crt`(if needed)                                                                                                              | `""`                       |
+| `ingressGrpc.tls.crt`          | TLS certificate for gRPC ingress                                                                                                                                                     | `""`                       |
+| `ingressGrpc.tls.key`          | TLS certificate private key for gRPC ingress                                                                                                                                         | `""`                       |
+| `ingressGrpc.tls.ca`           | TLS custom certificate authority for gRPC ingress                                                                                                                                    | `""`                       |
+

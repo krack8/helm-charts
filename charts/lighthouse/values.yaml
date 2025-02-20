@@ -48,7 +48,7 @@ db:
       persistence:
         size: 1Gi
         storageClassName: ""
-        annotations: { }
+        annotations: {}
         accessMode: ReadWriteOnce
       port: 27017
       targetPort: 27017
@@ -81,7 +81,7 @@ controller:
   image:
     repository: ""
     pullPolicy: ""
-    tag: controller-v0.1.0
+    tag: ""
   webapp:
     replicaCount: 1
     revisionHistoryLimit: 0
@@ -93,24 +93,23 @@ controller:
     image:
       repository: ""
       pullPolicy: ""
-      tag: webapp-v0.1.0
+      tag: ""
 
 ## @section Agent parameters
 
 agent:
   enabled: false
-  group: ""
-  defaultClusterName: ""
   replicaCount: 1
   revisionHistoryLimit: 0
   resources: {}
+  group: ""
+  defaultClusterName: ""
   service:
-    type: ClusterIP
     port: 8080
   image:
     repository: ""
     pullPolicy: ""
-    tag: agent-v0.1.0
+    tag: ""
 
 ## @section Agent Config parameters
 
