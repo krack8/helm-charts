@@ -10,12 +10,11 @@ metadata:
   labels:
     {{- include "lighthouse.agent.labels" . | nindent 4 }}
 data:
-  GRPC_SERVER: {{ include "lighthouse.controller.grpc.url" . | toString | quote }}
+  CONTROLLER_GRPC_SERVER_HOST: {{ include "lighthouse.controller.grpc.url" . | toString | quote }}
   PORT: {{ .Values.agent.service.port | toString | quote }}
   AGENT_SECRET_NAME: {{ include "lighthouse.agent.auth.secret.name" . | toString | quote }}
   RESOURCE_NAMESPACE: {{ include "lighthouse.namespace" . | toString | quote }}
-  AUTH_ENABLED: {{ include "auth.enabled" . | toString | quote }}
   RUN_MODE: {{ .Values.global.runMode | toString | quote }}
-  IS_INTERNAL_SERVER: {{ include "lighthouse.agent.connectServerInternally" . | toString | quote }}
-  SKIP_SERVER_TLS_VERIFICATION: {{ include "lighthouse.agent.skipServerTlsVerification" . | toString | quote }}
+  CONTROLLER_GRPC_TLS_ENABLED: {{ include "lighthouse.contoller.grpc.tls.enabled" . | toString | quote }}
+  CONTROLLER_GRPC_SKIP_TLS_VERIFICATION: {{ include "lighthouse.contoller.grpc.tls.skipVerification" . | toString | quote }}
 {{- end }}

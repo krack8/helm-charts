@@ -2,8 +2,25 @@
   Copyright Krack8, Inc. All Rights Reserved.
 */}}
 
+{{- define "lighthouse.fullname" -}}
+{{- if .Values.fullnameOverride -}}
+{{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" -}}
+{{- else -}}
+{{- $name := default .Chart.Name .Values.nameOverride -}}
+{{- if contains $name .Release.Name -}}
+{{- .Release.Name | trunc 63 | trimSuffix "-" -}}
+{{- else -}}
+{{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+
 {{- define "lighthouse.namespace" -}}
 {{- default "lighthouse" .Release.Namespace | trunc 63 | trimSuffix "-"  }}
+{{- end }}
+
+{{- define "lighthouse.cleanup.job.name" -}}
+{{- printf "%s-cleanup-job" (include "lighthouse.fullname" . ) | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{- define "lighthouse.chart" -}}
@@ -31,14 +48,6 @@ app.kubernetes.io/managed-by: {{ "Helm" }}
 {{- printf .Values.user.password }}
 {{- else -}}
 {{- printf "admin123" }}
-{{- end }}
-{{- end }}
-
-{{- define "auth.enabled" -}}
-{{- if eq .Values.auth.enabled true -}}
-{{- printf "TRUE" }}
-{{- else -}}
-{{- printf "FALSE" }}
 {{- end }}
 {{- end }}
 
@@ -112,7 +121,7 @@ service:
 {{- end -}}
 
 {{- define "kubeVersion" -}}
-{{- default (default .Capabilities.KubeVersion.Version) ((.Values.global).kubeVersion) -}}
+{{- default (default .Capabilities.KubeVersion.Version) ((.Values).kubeVersion) -}}
 {{- end -}}
 
 
@@ -133,19 +142,31 @@ service:
 {{- end }}
 {{- end }}
 
-{{- define "lighthouse.agent.connectServerInternally" -}}
-{{- if eq .Values.agent.connectServerInternally true -}}
+{{- define "lighthouse.contoller.grpc.tls.enabled" -}}
+{{- if and (eq .Values.controller.enabled true) (eq .Values.agent.enabled true) -}}
+{{ printf "FALSE" }}
+{{- else if eq .Values.config.controller.grpc.tls.enabled true -}}
 {{ printf "TRUE" }}
 {{- else -}}
 {{ printf "FALSE" }}
 {{- end }}
 {{- end }}
 
-{{- define "lighthouse.agent.skipServerTlsVerification" -}}
-{{- if eq .Values.agent.skipServerTlsVerification true -}}
+{{- define "lighthouse.contoller.grpc.tls.skipVerification" -}}
+{{- if and (eq .Values.controller.enabled true) (eq .Values.agent.enabled true) -}}
+{{ printf "TRUE" }}
+{{- else if eq .Values.config.controller.grpc.tls.skipVerification true -}}
 {{ printf "TRUE" }}
 {{- else -}}
 {{ printf "FALSE" }}
+{{- end }}
+{{- end }}
+
+{{- define "lighthouse.config.controller.grpc.url" -}}
+{{- if and (eq .Values.controller.enabled true) (eq .Values.agent.enabled true) -}}
+{{- printf "%s.%s:%s" (include "lighthouse.controller.name" .) (include "lighthouse.namespace" .) (toString .Values.controller.grpc.port) }}
+{{- else -}}
+{{- printf .Values.config.controller.grpc.host }}
 {{- end }}
 {{- end }}
 

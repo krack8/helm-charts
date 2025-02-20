@@ -1,4 +1,6 @@
 # Copyright Krack8, Inc. All Rights Reserved.
+## @section Global parameters
+
 global:
   runMode: "PRODUCTION"
   image:
@@ -15,32 +17,53 @@ global:
   ##     memory: 1024Mi
   ##
   resources: {}
-  kubeVersion: ""
+
+## @section Common parameters
+
+## @param kubeVersion Override Kubernetes version
+##
+kubeVersion: ""
+## @param nameOverride String to partially override the lighthouse.fullname
+##
+nameOverride: ""
+## @param fullnameOverride String to fully override the lighthouse.fullname
+##
+fullnameOverride: ""
+
+## @section Database parameters
 
 db:
   mongo:
-    create: false
-    replicaCount: 1
-    image:
-      repository: "mongo"
-      pullPolicy: "IfNotPresent"
-      tag: latest
-    rootUser:
-      username: ""
-      password: ""
-    persistence:
-      size: 1Gi
-      storageClassName: ""
-      annotations: {}
-      accessMode: ReadWriteOnce
-    port: 27017
-    targetPort: 27017
-    uri: ""
-    databaseName: ""
+    internal:
+      enabled: true
+      replicaCount: 1
+      image:
+        repository: "mongo"
+        pullPolicy: "IfNotPresent"
+        tag: latest
+      auth:
+        username: ""
+        password: ""
+        databaseName: "lighthouse"
+      persistence:
+        size: 1Gi
+        storageClassName: ""
+        annotations: { }
+        accessMode: ReadWriteOnce
+      port: 27017
+      targetPort: 27017
+    external:
+      enabled: false
+      uri: ""
+      databaseName: "lighthouse"
+
+## @section User parameters
 
 user:
   email: ""
   password: ""
+
+## @section Controller parameters
 
 controller:
   enabled: false
@@ -53,7 +76,6 @@ controller:
     port: 80
     targetPort: 8080
   grpc:
-    url: ""
     port: 50051
     targetPort: 50051
   image:
@@ -73,16 +95,15 @@ controller:
       pullPolicy: ""
       tag: webapp-v0.1.0
 
+## @section Agent parameters
+
 agent:
   enabled: false
   group: ""
   defaultClusterName: ""
   replicaCount: 1
   revisionHistoryLimit: 0
-  url: ""
   resources: {}
-  connectServerInternally: false
-  skipServerTlsVerification: false
   service:
     type: ClusterIP
     port: 8080
@@ -91,9 +112,23 @@ agent:
     pullPolicy: ""
     tag: agent-v0.1.0
 
+## @section Agent Config parameters
+
+config:
+  controller:
+    grpc:
+      host: ""
+      tls:
+        enabled: false
+        skipVerification: true
+        ca: ""
+
+## @section Agent Auth parameters
+
 auth:
-  enabled: false
   token: ""
+
+## @section Ingress parameters
 
 ingress:
   enabled: false
@@ -113,6 +148,9 @@ ingress:
     crt: ""
     key: ""
     ca: ""
+
+## @section Ingress gRPC parameters
+
 ingressGrpc:
   enabled: false
   ## e.g:

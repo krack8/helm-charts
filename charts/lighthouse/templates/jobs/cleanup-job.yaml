@@ -2,11 +2,11 @@
   Copyright Krack8, Inc. All Rights Reserved.
 */}}
 {{- if eq .Values.controller.enabled true -}}
-{{- if or (eq .Values.agent.enabled true) (eq .Values.db.mongo.create true) }}
+{{- if or (eq .Values.agent.enabled true) (and (eq .Values.db.mongo.internal.enabled true) (eq .Values.db.mongo.external.enabled false)) }}
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: lighthouse-cleanup-job
+  name: {{ include "lighthouse.cleanup.job.name" . }}
   namespace: {{ include "lighthouse.namespace" . }}
   annotations:
     "helm.sh/hook": pre-delete
@@ -24,7 +24,7 @@ spec:
             - -c
             - |
               echo "Cleaning up orphan resources..."
-                {{- if eq .Values.db.mongo.create true -}}
+                {{- if and (eq .Values.db.mongo.internal.enabled true) (eq .Values.db.mongo.external.enabled false) -}}
               echo "Checking and deleting DB..."
               if kubectl get sts {{ include "lighthouse.db.mongo.name" . }} -n {{ .Release.Namespace }} >/dev/null 2>&1; then
                 echo "Deleting Secrets..."

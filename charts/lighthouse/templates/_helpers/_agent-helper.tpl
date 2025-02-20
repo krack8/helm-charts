@@ -2,33 +2,32 @@
   Copyright Krack8, Inc. All Rights Reserved.
 */}}
 {{- define "lighthouse.agent.name" -}}
-{{- printf "lighthouse-agent" }}
+{{- printf "%s-agent" (include "lighthouse.fullname" . ) | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{- define "lighthouse.agent.serviceAccount.name" -}}
-{{ printf "lighthouse-agent-sa" }}
+{{  printf "%s-sa" (include "lighthouse.agent.name" .) | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{- define "lighthouse.agent.clusterrole.name" -}}
-{{ printf "lighthouse-agent-cr-%s" (include "lighthouse.namespace" .) }}
+{{ printf "%s-cr-%s" (include "lighthouse.agent.name" .) (include "lighthouse.namespace" .) | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{- define "lighthouse.agent.clusterrolebinding.name" -}}
-{{- printf "lighthouse-agent-crb-%s" (include "lighthouse.namespace" .) }}
+{{- printf "%s-crb-%s" (include "lighthouse.agent.name" .) (include "lighthouse.namespace" .) | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{- define "lighthouse.agent.configmap.name" -}}
-{{- include "lighthouse.agent.name" . }}
+{{- include "lighthouse.agent.name" . | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{- define "lighthouse.agent.secret.name" -}}
-{{- printf "%s-secret" (include "lighthouse.agent.name" .) }}
+{{- printf "%s-secret" (include "lighthouse.agent.name" .) | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{- define "lighthouse.agent.auth.secret.name" -}}
-{{- printf "%s-auth-secret" (include "lighthouse.agent.name" .) }}
+{{- printf "%s-auth-secret" (include "lighthouse.agent.name" .) | trunc 63 | trimSuffix "-" }}
 {{- end }}
-
 
 {{- define "lighthouse.agent.labels" -}}
 {{ include "lighthouse.common.labels" . }}

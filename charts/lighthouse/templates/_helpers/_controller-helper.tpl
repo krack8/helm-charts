@@ -2,35 +2,35 @@
   Copyright Krack8, Inc. All Rights Reserved.
 */}}
 {{- define "lighthouse.controller.name" -}}
-{{- print "lighthouse-controller" }}
+{{- printf "%s-controller" (include "lighthouse.fullname" . ) | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{- define "lighthouse.controller.serviceAccount.name" -}}
-{{ printf "%s-sa" (include "lighthouse.controller.name" .) }}
+{{ printf "%s-sa" (include "lighthouse.controller.name" .) | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{- define "lighthouse.controller.clusterrole.name" -}}
-{{ printf "%s-cr-%s" (include "lighthouse.controller.name" .) (include "lighthouse.namespace" .) }}
+{{ printf "%s-cr-%s" (include "lighthouse.controller.name" .) (include "lighthouse.namespace" .) | trunc 63 | trimSuffix "-"  }}
 {{- end }}
 
 {{- define "lighthouse.controller.clusterrolebinding.name" -}}
-{{- printf "%s-crb-%s" (include "lighthouse.controller.name" .) (include "lighthouse.namespace" .) }}
+{{- printf "%s-crb-%s" (include "lighthouse.controller.name" .) (include "lighthouse.namespace" .) | trunc 63 | trimSuffix "-"  }}
 {{- end }}
 
 {{- define "lighthouse.controller.configmap.name" -}}
-{{- include "lighthouse.controller.name" . }}
+{{- include "lighthouse.controller.name" . | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{- define "lighthouse.controller.secret.name" -}}
-{{- printf "%s-secret" (include "lighthouse.controller.name" .) }}
+{{- printf "%s-secret" (include "lighthouse.controller.name" .) | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{- define "lighthouse.controller.ingress.name" -}}
-{{- include "lighthouse.controller.name" . }}
+{{- include "lighthouse.controller.name" . | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{- define "lighthouse.controller.ingressGrpc.name" -}}
-{{- printf "%s-grpc" (include "lighthouse.controller.name" .) }}
+{{- printf "%s-grpc" (include "lighthouse.controller.name" .) | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{- define "lighthouse.controller.labels" -}}
@@ -82,9 +82,7 @@ app.kubernetes.io/instance: {{ printf "controller" }}
 {{- end }}
 
 {{- define "lighthouse.controller.grpc.url" -}}
-{{- if .Values.controller.grpc.url -}}
-{{- printf .Values.controller.grpc.url }}
-{{- else if (eq .Values.ingressGrpc.enabled true) -}}
+{{- if eq .Values.ingressGrpc.enabled true -}}
 {{- print .Values.ingressGrpc.hostname }}
 {{- else -}}
 {{- printf "%s.%s:%s" (include "lighthouse.controller.name" .) (include "lighthouse.namespace" .) (toString .Values.controller.grpc.port) }}

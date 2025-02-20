@@ -2,11 +2,11 @@
   Copyright Krack8, Inc. All Rights Reserved.
 */}}
 {{- define "lighthouse.webapp.name" -}}
-{{- print "lighthouse-webapp" }}
+{{- printf "%s-webapp" (include "lighthouse.fullname" . ) | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{- define "lighthouse.webapp.configmap.name" -}}
-{{- include "lighthouse.webapp.name" . }}
+{{- include "lighthouse.webapp.name" . | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{- define "lighthouse.webapp.labels" -}}

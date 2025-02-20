@@ -23,84 +23,56 @@ The command pulls Krack8 charts on the Kubernetes cluster.
 
 > **Tip**: Verify the chart by running `helm search repo`
 
-## Configuration and installation details
+## Installation details
 
-Lighthouse consists of three major components:
+### Install lighthouse controller and agent
 
-* **Lighthouse Controller** (`lighthouse-controller`): The core component that handles all incoming requests. Lighthouse controller runs two serves: http server and gRPC server.
-* **Lighthouse Webapp** (`lighthouse-webapp`): The graphical user interface for visualizing clusters. It connects to the Lighthouse controller's http server.
-* **Lighthouse Agent** (`lighthouse-agent`): This component that gets deployed inside each Kubernetes cluster to monitor its resources. Lighthouse agent connects to the Lighthouse controller's gRPC server.
+This chart allows you to install **lighthouse controller**, **lighthouse webapp** and **lighthouse agent** together with a single command 
+by setting `controller.enabled` to `true` and `agent.enabled` to `true`.
 
-To install Lighthouse, you need to set up the controller, webapp, and agents. You can install them using one of the following methods:
+> **Note:** The chart allows you to install only the **lighthouse controller** by setting `controller.enabled` to `true`. After the installation, you can add
+> **lighthouse agents** from the webapp. 
 
-* **Full Installation**: Deploy all components (controller, webapp, and agents) with a single command.
-* **Controller-Only Installation**: Set up only the Lighthouse controller and webapp on a single cluster.
-* **Agent-Only Installation**: Deploy only the Lighthouse agent inside a Kubernetes cluster.
-
-
-### Install Lighthouse controller and webapp
-
-This chart allows you to install the Lighthouse controller and webapp by setting `controller.enabled` to `true`.
-
-To install the chart with the release name `my-release`, use the following command:
-
+To install the lighthouse chart with the release name `my-release`, use the following command:
 ```
-helm install my-release krack8/lighthouse --create-namespace --namespace my-namepsace --set controller.enabled=true
+helm install my-release krack8/lighthouse --create-namespace --namespace my-namepsace --version 1.0.0
+--set controller.enabled=true \
+--set agent.enabled=true
 ```
 
 > **Note:** Replace the `krack8` repository name if you have set any other name. You can also update the helm release name `my-release` and `my-namespace` if needed.
 
-This command will first create the namespace if it does not already exist, then apply the **lighthouse controller** and **lighthouse webapp** deployments along with other necessary resources. The Lighthouse controller's http server will by default run on port `8080`, while the gRPC server will run on port `50051`. The webapp runs on port `8000`.
+This command will first create the namespace if it does not already exist, and will deploy the following resources.
+- **Lighthouse Controller** kubernetes resources including deployment, service, secret.
+- **Lighthouse Webapp** kubernetes resources including deployment, service.
+- **Lighthouse Agent** kubernetes resources including deployment, secret.
+- **Lighthouse Mongo Database** kubernetes resources including deployment, service, secret.
 
 > **Note:** 
->> Applying the command by setting only `controller.enabled` to `true` won't give you access to the Lighthouse webapp from the browser directly. 
-> To access it, you will need to add an ingress using additional parameters. Alternatively, you may use **lighthouse controller** and **lighthouse webapp** via port-forwarding.  
+>> By default, The controller container http server, grpc server and webapp runs on por `8080`, `50051` and `8000` respectively. You can update
+>> these by setting `controller.service.targetPort`, `controller.webapp.service.targetPort` and `controller.grpc.targetPort` for http server, grpc server and webapp respectively.
 >
->> If ingress does not exist for gRPC, then the **lighthouse agent** will only work if it is set up on the same Kubernetes cluster where the **lighthouse controller** is deployed.
+>> Applying the command by won't provide you the access to the Lighthouse webapp from the browser directly. You need to add ingress using additional parameters. Alternatively, you may connect the **Lighthouse Controller** and **Lighthouse Webapp** via port-forwarding.
+
 
 ### Install Lighthouse agent
 
-This chart allows you to install the Lighthouse agent by setting `agent.enabled` to `true`.
+To install the **Lighthouse Agent**, the **Lighthouse Controller** must be pre-installed in one of your clusters. 
+You can navigate to the **Lighthouse Webapp**, add a new cluster, and the system will generate a Helm command, 
+which can then be executed on any of your Kubernetes clusters to deploy the agent.
 
-To install Lighthouse agent, there are some required parameters which you need to provide, in order to connect with the **lighthouse controller**
-* `auth.token` - A token which will be generated by the lighthouse controller. This is You will get the token from **lighthouse webapp** while adding a new custer.
-* `agent.group` - A group id which will be generated by the lighthouse controller. This is You will get the token from **lighthouse webapp** while adding a new custer.
-* `controller.grpc.url` - The **lighthouse controller** grpc url for connecting the agent to controller. You will get the token from **lighthouse webapp** while adding a new custer.
+#### Lighthouse Agent additional parameters
 
-> **Note**: 
->> Before installing **lighthouse agent**, you need to install **lighthouse controller** and **lighthouse webapp**. 
->
->> If you install **lighthouse agent** along with **lighthouse controller** using a single command, then the **lighthouse agent** won't
-> need the required parameters, since **lighthouse controller** will set those values automatically. 
-> These values are only required if you install **lighthouse agent** individually.
+To install `Lighthouse Agent`, there are some additional parameters which you need to provide:
 
-To install the chart with the release name `my-agent-release`, use the following command:
-```
-helm install my-agent-release krack8/lighthouse --create-namespace --namespace my-namepsace \
---set agent.enabled=true \
---set auth.token="xxxxxxxxxxx" \
---set controller.grpc.url="lighhouse-controller:50051" \
---set agent.group="xxxx"
-```
+* `auth.token` - This token will be used to connect the **Lighthouse Agent** to **Lighthouse Controller**. You will get the value while adding a new cluster from the **Lighthouse Webapp**.
+* `agent.group` - A group id which will be generated by the **Lighthouse Controller**. You will get the value while adding a new cluster from the **Lighthouse Webapp**.
+* `config.controller.grpc.host` - The **Lighthouse Controller** grpc server host url for connecting the **Lighthouse Agent** to **Lighthouse Controller**. You will get the token from the **Lighthouse Webapp** while adding a new custer.
+* `config.controller.grpc.tls.enabled` - If TLS is enabled for the grpc server **Lighthouse Controller** the value needs to be set to `True`, `False` otherwise. Default value is `False`.
+* `config.controller.grpc.tls.skipVerification` - **Lighthouse Agent** by default tries to verify the TLS certificates for the **Lighthouse Controller** gRPC server. Default value is `True`. If you want to skip the verification, set the value to `False`.
+* `config.controller.grpc.tls.ca` - The custom certificate authority for **Lighthouse Controller** gRPC TLS. If you have added certificates with a custom ca for the gRPC TLS connection, you need to provide the value.
 
-> **Note:** 
->> Replace the `krack8` repository name if you have set any other name. You can also update the helm release name `my-agent-release` and `my-namespace` if needed.
->
->> Update the controller grpc server address, auth token and agent group. You will find these values from **lighthouse webapp** while adding a new cluster.
-
-While initiating the gRPC connection with the **Lighthouse controller**, the **Lighthouse agent** adds a TLS connection and tries to verify the TLS certificates for the gRPC server by default.
-If you are not using an ingress for grpc then you may set `agent.connectServerInternally` to `true` and to turn the tls verification off you can set  and `agent.skipServerTlsVerification` to `true`.
-
-> **Note:** Please make sure to set `agent.connectServerInternally` to `true` and `agent.skipServerTlsVerification` to `true`, if you are not enabling ingress for controller grpc.
-
-### Install lighthouse controller and server
-
-You can install **lighthouse controller**, **lighthouse webapp** and **lighthouse agent** together with a single command.
-
-e.g
-```
-helm install my-agent-release krack8/lighthouse --create-namespace --namespace my-namepsace --set controller.enabled=true --set agent.enabled=true
-```
+> **Note**: Before applying the generated helm command the **Lighthouse Webapp**, you can add your changes to the release name, namespace, chart version and parameters.
 
 ### Lighthouse Default User
 
@@ -129,21 +101,34 @@ helm install my-release krack8/lighthouse --create-namespace --namespace my-name
 
 ### Database
 
-Krack8 Lighthouse chart integrate database to store metadata and other configurations. Currently, the lighthouse chart supports mongodb database integration. 
-You can create a new mongo database using this chart or integrate existing mongo database.
+Krack8 Lighthouse requires a database for storing metadata and cluster configurations. This chart allows you to integrate database. Currently, the lighthouse chart supports mongodb database integration. 
+You can create a new mongo database using this chart or integrate existing mongo database. 
 
-The chart allows you to create database using `db.mongo.create`. Root user credentials can also be provided for creation by setting values to `db.rootUser.username` and `db.rootUser.password`. If not 
-provided, the database will be created using default credentials. These credentials are saved as a kubernetes secret in the namespace where database will be deployed.
+Installing The **Lighthouse Controller** with new database:
 
-If you have an existing mongodb, it is also possible to add that by setting the uri to `db.mongo.uri`(format: `mongodb://<username>:<password>@<mongodb server address>:<mongo port>`).
+While installing the controller, the database creates database by default with the following parameters:
+- `db.mongo.internal.enabled` - The chart creates a mongo database by default. Default value is `true`. If you don't want the chart to create the db by default, set it `false`.
+- `db.mongo.internal.auth.username` - Root username for the database. If not provided, the database will be created using the default username.
+- `db.mongo.internal.auth.password` - Root password for the database. If not provided, the database will be created using the default password.
+- `db.mongo.internal.auth.databaseName` - The chart sets a default database name if not provided. Default database name is `lighthouse`.
+- `db.mongo.internal.targetPort` - The chart sets a default port for the database. Default port is `27017`.
 
-> **Note:** If you are providing `db.mongo.uri`, then replace the placeholders in the given format according to your configuration.
+> **Note:** The database credentials are saved as a kubernetes secret in the namespace where database will be deployed.
 
-If you want to create the database, this chart allows you to add db storage configuration by setting values under `db.persistence` section. You can set the following:
-- `db.persistence.size`: For setting the size of the persistent volume. Default value is "1Gi". 
-- `db.persistence.storageClassName`: Set your cluster's storage class name.
-- `db.persistence.annotations`: You can set annotations for persistent volume. 
-- `db.persistence.accessMode`: You can set accessMode for the persistent volume. Default value is "ReadWriteOnce"
+This chart also allows you to add db storage configuration by setting values under `db.mongo.internal.persistence` section. You can set the following:
+- `db.mongo.internal.persistence.size`: For setting the size of the persistent volume. Default value is "1Gi".
+- `db.mongo.internal.persistence.storageClassName`: Set your cluster's storage class name.
+- `db.mongo.internal.persistence.annotations`: You can set annotations for persistent volume.
+- `db.mongo.internal.persistence.accessMode`: You can set accessMode for the persistent volume. Default value is "ReadWriteOnce"
+
+Installing The **Lighthouse Controller** with an existing database:
+
+If you have an existing mongodb, it is also possible to add that by setting `db.mongo.external.enabled` to `true`. Here are the parameters:
+- `db.mongo.external.enabled` - For adding the existing database, need to set the value to `true`. Default value is `false`.
+- `db.mongo.external.uri` - Need to provide the uri for the existing database. The format is `mongodb://<username>:<password>@<mongodb server address>:<mongo port>` (Replace the placeholders in the given format according to your configuration)
+- `db.mongo.external.databaseName` - You can provide which database to use for the Lighthouse. Default database name is `lighthouse`. 
+
+> **Note:** Make sure to disable the mongo creation while adding the existing database by setting `db.mongo.internal.enabled` to `false`.
 
 ### Ingress
 
@@ -182,7 +167,7 @@ The chart also allows you to add certificates directly instead of providing secr
 ```
 --set ingress.tls.crt="-----BEGIN CERTIFICATE-----
 MIIFATCCA+mgAwIBAgISBK65Pjc/MdGCizcwmq40d+sNMA0GCSqGSIb3DQEBCwUA
-kxXSh4JwRQB1DQ4LVQRkXq37axucKaap5a8pSjlFULMzJ+d+jcnGc7BBiueFs5v6
+...
 GXL9vAUEFuvHCyoc7I+Y18ekpPPPFBQuTdxHA2UfZMwBRYTFHQ==
 -----END CERTIFICATE-----"
 ```
@@ -190,19 +175,16 @@ GXL9vAUEFuvHCyoc7I+Y18ekpPPPFBQuTdxHA2UfZMwBRYTFHQ==
 ```
 --set ingress.tls.key="-----BEGIN RSA PRIVATE KEY-----
 MIIEogIBAAKCAQEAuvXBcqLD3LkqN6zTWovgJZ2WeZC21Zbnxb509n6iWSlq50G2
-1i+MOtlPByL2VIKRg4fNB8IlCZrZ/b/Mq55PXiQyD9YEo2hxWYc=
+...
 -----END RSA PRIVATE KEY-----"
 ```
 - `ingress.tls.ca` and `ingressGrpc.tls.ca`: If you have a custom authority, you can add the certificate authority for the ingress host. e.g.
 ```
 --set ingress.tls.ca="-----BEGIN CERTIFICATE-----
 MIIFATCCA+mgAwIBAgISBK65Pjc/MdGCizcwmq40d+sNMA0GCSqGSIb3DQEBCwUA
-GXL9vAUEFuvHCyoc7I+Y18ekpPPPFBQuTdxHA2UfZMwBRYTFHQ==
+...
 -----END CERTIFICATE-----"
 ```
-
-> **Note:** If you are using your custom certificate authority in TLS, make sure your add it to
-> `ingress.tls.ca` and `ingressGrpc.tls.ca` (even if you set secretName)
 
 ## Parameters
 
@@ -214,6 +196,13 @@ GXL9vAUEFuvHCyoc7I+Y18ekpPPPFBQuTdxHA2UfZMwBRYTFHQ==
 | `global.image.repository` | Global Docker image repository                                                       | `quay.io/klovercloud/krack8` |
 | `global.image.pullPolicy` | Global Docker image pull policy                                                      | `IfNotPresent`               |
 | `global.resources`        | Global resource (limit,request) section for containers inside Lighthouse deployments | `{}`                         |
-| `global.kubeVersion`      | Kubernetes version for your cluster. The chart will detect it if not provided.       | `""`                         |
 
 
+### Common parameters
+
+| Name                | Description                                                                       | Value           |
+| ------------------- |-----------------------------------------------------------------------------------| --------------- |
+| `kubeVersion`       | Override Kubernetes version                                                       | `""`            |
+| `nameOverride`      | String to partially override lighthouse.fullname. Default value is the chart name | `""`            |
+| `fullnameOverride`  | String to fully override lighthouse.fullname. Default value is the chart name                                    | `""`            |
+| `commonLabels`      | Labels to add to all deployed objects                                             | `{}`            |
