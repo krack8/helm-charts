@@ -24,7 +24,7 @@ spec:
             - -c
             - |
               echo "Cleaning up orphan resources..."
-                {{- if and (eq .Values.db.mongo.internal.enabled true) (eq .Values.db.mongo.external.enabled false) -}}
+              {{ if and (eq .Values.db.mongo.internal.enabled true) (eq .Values.db.mongo.external.enabled false) }}
               echo "Checking and deleting DB..."
               if kubectl get sts {{ include "lighthouse.db.mongo.name" . }} -n {{ .Release.Namespace }} >/dev/null 2>&1; then
                 echo "Deleting DB Statefulset..."
@@ -40,13 +40,37 @@ spec:
               else
                 echo "No PVC found. Skipping deletion."
               fi
-                {{- end }}
+              {{ end }}
+              {{ if eq .Values.agent.enabled true }}
+              echo "Checking for Agent Deployment..."
+              if kubectl get deploy {{ include "lighthouse.agent.name" . }} -n {{ .Release.Namespace }} >/dev/null 2>&1; then
+                echo "Deleting Agent Deployment..."
+                kubectl delete deploy {{ include "lighthouse.agent.name" . }} -n {{ .Release.Namespace }}
+              else
+                echo "No Deployment found. Skipping deletion."
+              fi
+
               echo "Checking for Secrets..."
               if kubectl get secret {{ include "lighthouse.agent.auth.secret.name" . }} -n {{ .Release.Namespace }} >/dev/null 2>&1; then
                 echo "Deleting Secrets..."
                 kubectl delete secret {{ include "lighthouse.agent.auth.secret.name" . }} -n {{ .Release.Namespace }}
               else
                 echo "No Secrets found. Skipping deletion."
+              fi
+              {{ end }}
+              echo "Checking for Controller Deployment..."
+              if kubectl get deploy {{ include "lighthouse.controller.name" . }} -n {{ .Release.Namespace }} >/dev/null 2>&1; then
+                echo "Deleting Controller Deployment..."
+                kubectl delete deploy {{ include "lighthouse.controller.name" . }} -n {{ .Release.Namespace }}
+              else
+                echo "No Deployment found. Skipping deletion."
+              fi
+              echo "Checking for Webapp Deployment..."
+              if kubectl get deploy {{ include "lighthouse.webapp.name" . }} -n {{ .Release.Namespace }} >/dev/null 2>&1; then
+                echo "Deleting Webapp Deployment..."
+                kubectl delete deploy {{ include "lighthouse.webapp.name" . }} -n {{ .Release.Namespace }}
+              else
+                echo "No Deployment found. Skipping deletion."
               fi
 {{- end }}
 {{- end }}
