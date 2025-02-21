@@ -17,6 +17,14 @@
 {{- printf "%s-crb-%s" (include "lighthouse.controller.name" .) (include "lighthouse.namespace" .) | trunc 63 | trimSuffix "-"  }}
 {{- end }}
 
+{{- define "lighthouse.controller.role.name" -}}
+{{ printf "%s-role" (include "lighthouse.controller.name" .) | trunc 63 | trimSuffix "-"  }}
+{{- end }}
+
+{{- define "lighthouse.controller.rolebinding.name" -}}
+{{- printf "%s-rb" (include "lighthouse.controller.name" .) | trunc 63 | trimSuffix "-"  }}
+{{- end }}
+
 {{- define "lighthouse.controller.configmap.name" -}}
 {{- include "lighthouse.controller.name" . | trunc 63 | trimSuffix "-" }}
 {{- end }}
@@ -67,7 +75,7 @@ app.kubernetes.io/instance: {{ printf "controller" }}
 {{- if not (empty .Values.controller.image.tag) -}}
 {{- printf .Values.controller.image.tag }}
 {{- else }}
-{{- print "controller-v1.0.0" }}
+{{- print "controller-v0.1.0" }}
 {{- end }}
 {{- end }}
 
@@ -82,7 +90,9 @@ app.kubernetes.io/instance: {{ printf "controller" }}
 {{- end }}
 
 {{- define "lighthouse.controller.grpc.url" -}}
-{{- if eq .Values.ingressGrpc.enabled true -}}
+{{- if and (eq .Values.controller.enabled true) (eq .Values.agent.enabled true) -}}
+{{- printf "%s.%s:%s" (include "lighthouse.controller.name" .) (include "lighthouse.namespace" .) (toString .Values.controller.grpc.port) }}
+{{- else if eq .Values.ingressGrpc.enabled true -}}
 {{- print .Values.ingressGrpc.hostname }}
 {{- else -}}
 {{- printf "%s.%s:%s" (include "lighthouse.controller.name" .) (include "lighthouse.namespace" .) (toString .Values.controller.grpc.port) }}

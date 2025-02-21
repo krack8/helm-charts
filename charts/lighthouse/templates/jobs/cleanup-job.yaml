@@ -27,7 +27,7 @@ spec:
                 {{- if and (eq .Values.db.mongo.internal.enabled true) (eq .Values.db.mongo.external.enabled false) -}}
               echo "Checking and deleting DB..."
               if kubectl get sts {{ include "lighthouse.db.mongo.name" . }} -n {{ .Release.Namespace }} >/dev/null 2>&1; then
-                echo "Deleting Secrets..."
+                echo "Deleting DB Statefulset..."
                 kubectl delete sts {{ include "lighthouse.db.mongo.name" . }} -n {{ .Release.Namespace }}
               else
                 echo "No DB StatefulsSet found. Skipping deletion."

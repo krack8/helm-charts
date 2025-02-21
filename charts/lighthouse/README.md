@@ -35,7 +35,7 @@ by setting `controller.enabled` to `true` and `agent.enabled` to `true`.
 
 To install the lighthouse chart with the release name `my-release`, use the following command:
 ```
-helm install my-release krack8/lighthouse --create-namespace --namespace my-namepsace --version 1.0.0 \
+helm install my-release krack8/lighthouse --create-namespace --namespace my-namepsace --version 0.1.0 \
 --set controller.enabled=true \
 --set agent.enabled=true
 ```
@@ -43,16 +43,21 @@ helm install my-release krack8/lighthouse --create-namespace --namespace my-name
 > **Note:** Replace the `krack8` repository name if you have set any other name. You can also update the helm release name `my-release` and `my-namespace` if needed.
 
 This command will first create the namespace if it does not already exist, and will deploy the following resources.
-- **Lighthouse Controller** kubernetes resources including deployment, service, secret.
-- **Lighthouse Webapp** kubernetes resources including deployment, service.
+- **Lighthouse Controller** kubernetes resources including deployment, service, secret. Default container port for http server is `8080` and gRPC server is `50051`.
+- **Lighthouse Webapp** kubernetes resources including deployment, service. Default container port is `8000`.
 - **Lighthouse Agent** kubernetes resources including deployment, secret.
-- **Lighthouse Mongo Database** kubernetes resources including deployment, service, secret.
+- **Lighthouse Mongo Database** kubernetes resources including deployment, service, secret. Default container port is `27017`.
 
 > **Note:** 
 >> By default, The controller container http server, grpc server and webapp runs on por `8080`, `50051` and `8000` respectively. You can update
 >> these by setting `controller.service.targetPort`, `controller.webapp.service.targetPort` and `controller.grpc.targetPort` for http server, grpc server and webapp respectively.
 >
->> Applying the command won't provide you the access to the **Lighthouse Webapp** from the browser directly. You need to add ingress using additional parameters. Alternatively, you may connect the **Lighthouse Controller** and **Lighthouse Webapp** via port-forwarding.
+>> Applying the command won't provide you the access to the **Lighthouse Webapp** from the browser directly. You need to add ingress using additional parameters. 
+>> 
+>> Alternatively, you may connect the **Lighthouse Controller** and **Lighthouse Webapp** via port-forwarding by following the procedures below:
+>> - Port forward **Lighthouse Controller** pod's container http port.
+>> - Port forward **Lighthouse Webapp** pod's container http port.
+>> - Update the **Lighthouse Controller's** api endpoint in configmap of **Lighthouse Webapp** 
 
 
 ### Install Lighthouse agent
@@ -147,6 +152,22 @@ The chart also allows you to add additional parameters for both http server ingr
 - `ingress.pathType` and `ingressGrpc.pathType`: For setting ingress pathType. Default value is `ImplementationSpecific`.
 - `ingress.apiVersion` and `ingressGrpc.apiVersion`: For setting ingress apiVersion depending on your cluster's supported ingress apiVersion. By default, the chart will set 
 the apiVersion based on your cluster's configurations.
+
+e.g.
+```
+helm install my-release krack8/lighthouse --create-namespace --namespace my-namepsace \
+--set controler.enabled=true \
+--set ingress.enabled=true \
+--set ingress.hostname=xyz.com \
+--set ingress.ingressClassName=nginx \
+--set ingressGrpc.enabled=true \
+--set ingressGrpc.ingressClassName=nginx \
+--set ingressGrpc.hostname=grpc.xyz.com \
+--set ingressGrpc.annotations."nginx\.ingress\.kubernetes\.io/backend-protocol"="GRPC"
+```
+
+> **Note:** The command is an example of adding ingress for **Lighthouse Controller's** http and gRPC server. The above annotations is for nginx-ingress-controller. 
+> Before applying the command, replace the hostname, ingressClassName and annotations according to your cluster configuration.
 
 ### Securing traffic using TLS
 
