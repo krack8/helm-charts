@@ -49,7 +49,7 @@ This command will first create the namespace if it does not already exist, and w
 - **Lighthouse Mongo Database** kubernetes resources including deployment, service, secret. Default container port is `27017`.
 
 > **Note:** 
->> By default, The controller container http server, grpc server and webapp runs on por `8080`, `50051` and `8000` respectively. You can update
+>> By default, The controller container http server, grpc server and webapp runs on port `8080`, `50051` and `8000` respectively. You can update
 >> these by setting `controller.service.targetPort`, `controller.webapp.service.targetPort` and `controller.grpc.targetPort` for http server, grpc server and webapp respectively.
 >
 >> Applying the command won't provide you the access to the **Lighthouse Webapp** from the browser directly. You need to add ingress using additional parameters. 
