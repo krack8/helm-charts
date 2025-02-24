@@ -35,7 +35,7 @@ by setting `controller.enabled` to `true` and `agent.enabled` to `true`.
 
 To install the lighthouse chart with the release name `my-release`, use the following command:
 ```
-helm install my-release krack8/lighthouse --create-namespace --namespace my-namepsace --version 0.1.0 \
+helm install my-release krack8/lighthouse --create-namespace --namespace my-namespace --version 0.1.0 \
 --set controller.enabled=true \
 --set agent.enabled=true
 ```
@@ -98,7 +98,7 @@ You can set resource values to `controller.resources`, `controller.webapp.resour
 
 e.g.
 ```
-helm install my-release krack8/lighthouse --create-namespace --namespace my-namepsace \
+helm install my-release krack8/lighthouse --create-namespace --namespace my-namespace \
 --set controler.enabled=true \
 --set controler.resources.requests.cpu="50m" \
 --set controler.resources.requests.memory="128Mi"
@@ -155,7 +155,7 @@ the apiVersion based on your cluster's configurations.
 
 e.g.
 ```
-helm install my-release krack8/lighthouse --create-namespace --namespace my-namepsace \
+helm install my-release krack8/lighthouse --create-namespace --namespace my-namespace \
 --set controler.enabled=true \
 --set ingress.enabled=true \
 --set ingress.hostname=xyz.com \
