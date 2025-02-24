@@ -57,8 +57,11 @@ This command will first create the namespace if it does not already exist, and w
 >> Alternatively, you may connect the **Lighthouse Controller** and **Lighthouse Webapp** via port-forwarding by following the procedures below:
 >> - Port forward **Lighthouse Controller** pod's container http port.
 >> - Port forward **Lighthouse Webapp** pod's container http port.
->> - Update the **Lighthouse Controller's** api endpoint in configmap of **Lighthouse Webapp** 
-
+>> - Update the **Lighthouse Controller's** api endpoint in configmap of **Lighthouse Webapp**
+>
+>> When installing the chart with `controller.enabled=true` and `agent.enabled=true`, 
+> the **Lighthouse Controller** generates a secret (named containing `-agent-auth-secret` as suffix) in the same namespace. 
+> This secret contains the authentication token required for the **Lighthouse Agent** to establish a connection with the **Lighthouse Controller**.
 
 ### Install Lighthouse agent
 
@@ -352,3 +355,19 @@ MIIFATCCA+mgAwIBAgISBK65Pjc/MdGCizcwmq40d+sNMA0GCSqGSIb3DQEBCwUA
 | `ingressGrpc.tls.key`          | TLS certificate private key for gRPC ingress                                                                                                                                         | `""`                       |
 | `ingressGrpc.tls.ca`           | TLS custom certificate authority for gRPC ingress                                                                                                                                    | `""`                       |
 
+## Uninstalling the Lighthouse
+
+To uninstall/delete the `my-release` deployment from namespace `my-namespace`:
+
+```
+helm delete my-release --namespace my-namespace
+```
+
+> **Note:** 
+>> This command will delete all the resources deployed under the release. If the release was installed
+>> with `controller.enabled=true` and `agent.enabled=true`, 
+>> then after the completion of helm uninstallation process, you need to manually delete the generated agent auth secret in the
+>> same namespace (secret name having "-agent-auth-secret" as suffix).
+> 
+>> If the release was created with `controller.enabled=true` and you have provided any external database with `db.mongo.external.enabled=true`,
+> as this chart will create a database, you need to delete the PVC after the completion of helm uninstallation process.
