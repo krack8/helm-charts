@@ -47,7 +47,7 @@ app.kubernetes.io/managed-by: {{ "Helm" }}
 {{- if .Values.user.password -}}
 {{- printf .Values.user.password }}
 {{- else -}}
-{{- printf "admin123" }}
+{{- printf "lighthouse" }}
 {{- end }}
 {{- end }}
 

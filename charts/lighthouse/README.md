@@ -82,7 +82,7 @@ To install **Lighthouse Agent**, there are some additional parameters which you 
 ### Lighthouse Default User
 
 To access the lighthouse, you will require a default user. The **Lighthouse controller** creates a user with default
-credentials. By default, a user is created using default username `admin@default.com` and with default password `admin123`. 
+credentials. By default, a user is created using default username `admin@default.com` and with default password `lighthouse`. 
 
 This chart allows you to modify the user credentials before installing the **Lighthouse Controller** by setting
 values to `user.email` and `user.password`.

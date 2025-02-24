@@ -11,7 +11,6 @@ metadata:
     {{- include "lighthouse.agent.labels" . | nindent 4 }}
 data:
   CONTROLLER_GRPC_SERVER_HOST: {{ include "lighthouse.controller.grpc.url" . | toString | quote }}
-  PORT: {{ .Values.agent.service.port | toString | quote }}
   AGENT_SECRET_NAME: {{ include "lighthouse.agent.auth.secret.name" . | toString | quote }}
   RESOURCE_NAMESPACE: {{ include "lighthouse.namespace" . | toString | quote }}
   RUN_MODE: {{ .Values.global.runMode | toString | quote }}
