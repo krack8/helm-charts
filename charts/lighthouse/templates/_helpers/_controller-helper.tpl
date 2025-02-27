@@ -90,6 +90,14 @@ app.kubernetes.io/instance: {{ printf "controller" }}
 {{- end }}
 
 {{- define "lighthouse.controller.grpc.url" -}}
+{{- if eq .Values.ingressGrpc.enabled true -}}
+{{- print .Values.ingressGrpc.hostname }}
+{{- else -}}
+{{- printf "%s.%s:%s" (include "lighthouse.controller.name" .) (include "lighthouse.namespace" .) (toString .Values.controller.grpc.port) }}
+{{- end }}
+{{- end }}
+
+{{- define "agent.lighthouse.controller.grpc.url" -}}
 {{- if and (eq .Values.controller.enabled true) (eq .Values.agent.enabled true) -}}
 {{- printf "%s.%s:%s" (include "lighthouse.controller.name" .) (include "lighthouse.namespace" .) (toString .Values.controller.grpc.port) }}
 {{- else if not (empty .Values.config.controller.grpc.host) -}}
