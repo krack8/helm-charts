@@ -35,7 +35,7 @@ by setting `controller.enabled` to `true` and `agent.enabled` to `true`.
 
 To install the lighthouse chart with the release name `my-release`, use the following command:
 ```
-helm install my-release krack8/lighthouse --create-namespace --namespace my-namespace --version 0.1.0 \
+helm install my-release krack8/lighthouse --create-namespace --namespace my-namespace --version 0.2.0 \
 --set controller.enabled=true \
 --set agent.enabled=true
 ```
@@ -163,6 +163,7 @@ helm install my-release krack8/lighthouse --create-namespace --namespace my-name
 --set ingress.enabled=true \
 --set ingress.hostname=xyz.com \
 --set ingress.ingressClassName=nginx \
+--set ingress.annotations."nginx\.org/websocket-services"="lighthouse-controller" \
 --set ingressGrpc.enabled=true \
 --set ingressGrpc.ingressClassName=nginx \
 --set ingressGrpc.hostname=grpc.xyz.com \
