@@ -102,9 +102,9 @@ You can set resource values to `controller.resources`, `controller.webapp.resour
 e.g.
 ```
 helm install my-release krack8/lighthouse --create-namespace --namespace my-namespace \
---set controler.enabled=true \
---set controler.resources.requests.cpu="50m" \
---set controler.resources.requests.memory="128Mi"
+--set controller.enabled=true \
+--set controller.resources.requests.cpu="50m" \
+--set controller.resources.requests.memory="128Mi"
 ```
 
 ### Database
@@ -159,7 +159,7 @@ the apiVersion based on your cluster's configurations.
 e.g.
 ```
 helm install my-release krack8/lighthouse --create-namespace --namespace my-namespace \
---set controler.enabled=true \
+--set controller.enabled=true \
 --set ingress.enabled=true \
 --set ingress.hostname=xyz.com \
 --set ingress.ingressClassName=nginx \
