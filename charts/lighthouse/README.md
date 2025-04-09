@@ -50,14 +50,15 @@ This command will first create the namespace if it does not already exist, and w
 
 > **Note:** 
 >> By default, The controller container http server, grpc server and webapp runs on port `8080`, `50051` and `8000` respectively. You can update
->> these by setting `controller.service.targetPort`, `controller.webapp.service.targetPort` and `controller.grpc.targetPort` for http server, grpc server and webapp respectively.
+>> these by setting `controller.service.targetPort`, `controller.grpc.targetPort` and `controller.webapp.service.targetPort` for http server, grpc server and webapp respectively.
+>> You can also set values to `controller.service.port`, `controller.grpc.port` and `controller.webapp.service.port`. Their default values are `80`,`50051` and `80` respectively.
 >
 >> Applying the command won't provide you the access to the **Lighthouse Webapp** from the browser directly. You need to add ingress using additional parameters. 
 >> 
 >> Alternatively, you may connect the **Lighthouse Controller** and **Lighthouse Webapp** via port-forwarding by following the procedures below:
 >> - Port forward **Lighthouse Controller** pod's container http port.
 >> - Port forward **Lighthouse Webapp** pod's container http port.
->> - Update the **Lighthouse Controller's** api endpoint in configmap of **Lighthouse Webapp**
+>> - Update the **Lighthouse Controller's** api endpoint in configmap of **Lighthouse Webapp**. Make sure to restart the **Lighthouse Webapp** deployment after updating the configmap.
 >
 >> When installing the chart with `controller.enabled=true` and `agent.enabled=true`, 
 > the **Lighthouse Controller** generates a secret (named containing `-agent-auth-secret` as suffix) in the same namespace. 
