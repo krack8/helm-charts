@@ -157,6 +157,14 @@ The chart also allows you to add additional parameters for both http server ingr
 - `ingress.apiVersion` and `ingressGrpc.apiVersion`: For setting ingress apiVersion depending on your cluster's supported ingress apiVersion. By default, the chart will set 
 the apiVersion based on your cluster's configurations.
 
+> **Important:**
+>> The **Lighthouse Controller** opens a WebSocket server for real-time communication. If you're using an Ingress controller, 
+>> you must add appropriate annotations in the `ingress.annotations` to ensure WebSocket connections are properly forwarded. For example, when using nginx-ingress-controller, you can use:
+>> `nginx.org/websocket-services: lighthouse-controller`
+>
+>> To enable gRPC communication, you must also add the correct gRPC annotation depending on your ingress controller in the `ingressGrpc.annotations`. For nginx, use:
+>> `nginx.ingress.kubernetes.io/backend-protocol: "GRPC"`
+
 e.g.
 ```
 helm install my-release krack8/lighthouse --create-namespace --namespace my-namespace \
