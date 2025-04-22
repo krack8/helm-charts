@@ -63,6 +63,6 @@ app.kubernetes.io/instance: {{ printf "agent" }}
 {{- if not (empty .Values.agent.image.tag) -}}
 {{- printf .Values.agent.image.tag }}
 {{- else }}
-{{- printf "agent-v0.2.0" }}
+{{- printf "agent-v%s" (.Chart.Version) }}
 {{- end }}
 {{- end }}

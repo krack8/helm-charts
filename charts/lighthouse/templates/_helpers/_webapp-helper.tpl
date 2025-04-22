@@ -43,6 +43,6 @@ app.kubernetes.io/instance: {{ printf "webapp" }}
 {{- if not (empty .Values.controller.webapp.image.tag) -}}
 {{- printf .Values.controller.webapp.image.tag }}
 {{- else }}
-{{- printf "webapp-v0.2.1" }}
+{{- printf "webapp-v%s" (.Chart.Version) }}
 {{- end }}
 {{- end }}
