@@ -37,6 +37,11 @@ spec:
             pathType: {{ .Values.ingress.pathType }}
               {{- end }}
             backend: {{- include "ingress.backend" (dict "ingressApiVersion" (include "ingress.apiVersion" .) "serviceName" (include "lighthouse.controller.name" .) "servicePort" .Values.controller.service.port . $)  | nindent 14 }}
+          - path: /ws
+              {{- if eq "true" (include "ingress.supportsPathType" .) }}
+            pathType: {{ .Values.ingress.pathType }}
+              {{- end }}
+            backend: {{- include "ingress.backend" (dict "ingressApiVersion" (include "ingress.apiVersion" .) "serviceName" (include "lighthouse.controller.name" .) "servicePort" .Values.controller.service.port . $)  | nindent 14 }}
       {{- end }}
     {{- if eq .Values.ingress.tls.enabled true }}
   tls:
