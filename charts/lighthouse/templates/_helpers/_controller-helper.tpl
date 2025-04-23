@@ -75,7 +75,7 @@ app.kubernetes.io/instance: {{ printf "controller" }}
 {{- if not (empty .Values.controller.image.tag) -}}
 {{- printf .Values.controller.image.tag }}
 {{- else }}
-{{- print "controller-v%s" (.Chart.Version) }}
+{{- printf "controller-v%s" (.Chart.Version) }}
 {{- end }}
 {{- end }}
 
